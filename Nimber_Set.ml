@@ -129,7 +129,7 @@ let rec nimber_multi_memo x y =
       begin 
         for i = 0 to y-1 do
           for j= 0 to x-1 do
-            set := SS.union !set (SS.singleton (optimal_nimber_add (optimal_nimber_add (nimber_multi_dynamique i x)  (nimber_multi_dynamique y j)) (nimber_multi_dynamique i j)))
+            set := SS.union !set (SS.singleton (optimal_nimber_add (optimal_nimber_add (nimber_multi_memo i x)  (nimber_multi_memo y j)) (nimber_multi_memo i j)))
           done;
         done;
         let result = calcul_mex !set in
@@ -138,3 +138,4 @@ let rec nimber_multi_memo x y =
       end 
 ;;
 
+(*https://math.stackexchange.com/questions/1671933/nimber-multiplication*)

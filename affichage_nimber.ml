@@ -104,7 +104,7 @@ let affichage_string_multi n =
   (l1 ()) ^ (ligne_centrale ())
 ;;
 
-let () = 
+let imprime_add = 
 let channel = open_out "/home/arthur/Desktop/TIPE/sortie.txt" in
  Printf.fprintf channel "%s\n" (affichage_string_add 99);
 close_out channel;;
