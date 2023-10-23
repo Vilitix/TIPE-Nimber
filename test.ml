@@ -1,0 +1,1 @@
+print_int (Nim_func.add 11 12)
