@@ -1,4 +1,3 @@
-
 EXEC=test
 
 all: $(EXEC)
@@ -17,10 +16,10 @@ Kayles.cmi: Kayles.mli
 Kayles.cmx: Kayles.ml Kayles.cmi
 	ocamlopt -c $<
 
-twopins.cmi: twopins.mli
+Twopins.cmi: Twopins.mli
 	ocamlc -c $<
 
-twopins.cmx: twopins.ml twopins.cmi
+Twopins.cmx: Twopins.ml Twopins.cmi
 	ocamlopt -c $<
 
 Marienbad_reso.cmi: Marienbad_reso.mli
@@ -37,7 +36,7 @@ Affichage_table_nimber.cmx: Affichage_table_nimber.ml Affichage_table_nimber.cmi
 
 
 
-$(EXEC): Nim_func.cmx Kayles.cmx twopins.cmx Marienbad_reso.cmx Affichage_table_nimber.cmx test.ml
+$(EXEC): Nim_func.cmx Kayles.cmx Twopins.cmx Marienbad_reso.cmx Affichage_table_nimber.cmx test.ml
 	ocamlopt -o $@ $^
 
 clean:

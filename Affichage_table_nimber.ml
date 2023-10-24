@@ -108,3 +108,4 @@ let imprime_add =
 let channel = open_out "/home/arthur/Desktop/TIPE/sortie.txt" in
  Printf.fprintf channel "%s\n" (string_multi 15);
 close_out channel;;
+
