@@ -21,7 +21,7 @@ let search_pattern board:int array list = (*renvoi une liste de tous les jeu *)
   aux board [] 0 0;;
 
 
-
+(*
 let rec nim_naif board = (* colonnes supposées non vides*)
   let set = ref Nim_func.SS.empty in
   let n = Array.length board in
@@ -45,7 +45,7 @@ let rec nim_naif board = (* colonnes supposées non vides*)
     done;
     (Nim_func.mex !set)
   ;;
-
+ *)
 let rec nim_naif board = (* colonnes supposées non vides*)
   let set = ref Nim_func.SS.empty in
   let n = Array.length board in

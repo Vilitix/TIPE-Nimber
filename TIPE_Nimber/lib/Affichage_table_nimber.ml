@@ -6,7 +6,7 @@ let add_unit n =
   print_endline "";
 
 print_string "_____";
-  for j = 0 to n do 
+  for _ = 0 to n do 
     print_string "____";
   done;
   print_endline "";
@@ -33,7 +33,7 @@ let string_add  n = (*n taille du tableau n*n pour la nimber addition*)
     done;
     l:= !l ^ "\n";
     l:= !l ^ "_____";
-    for j = 0 to n do 
+    for _ = 0 to n do 
       l:= !l ^ "____";
     done;
     l:= !l ^ "\n";
@@ -73,7 +73,7 @@ let string_multi n =
     done;
     l:= !l ^ "\n";
     l:= !l ^ "_____";
-    for j = 0 to n do 
+    for _ = 0 to n do 
       l:= !l ^ "_____";
     done;
     l:= !l ^ "\n";

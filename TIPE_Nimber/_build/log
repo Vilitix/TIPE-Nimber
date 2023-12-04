@@ -3,7 +3,7 @@
 # Shared cache: disabled
 # Workspace root: /home/arthur/Desktop/TIPE/code/TIPE_Nimber
 # Auto-detected concurrency: 8
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_f9d686_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_effde0_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -157,64 +157,18 @@ $ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49
 >                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 > Error: Unbound module Projet_Cram
 [2]
-$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl lib/Marienbad_reso.ml) > _build/default/lib/.TIPE_Nimber.objs/tIPE_Nimber__Marienbad_reso.impl.d
-$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I lib/.TIPE_Nimber.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/byte/tIPE_Nimber__Affichage_table_nimber.cmo -c -impl lib/Affichage_table_nimber.ml)
-> File "lib/Affichage_table_nimber.ml", lines 9-11, characters 2-6:
->  9 | ..for j = 0 to n do 
-> 10 |     print_string "____";
-> 11 |   done.
-> Error (warning 35 [unused-for-index]): unused for-loop index j.
-> File "lib/Affichage_table_nimber.ml", lines 36-38, characters 4-8:
-> 36 | ....for j = 0 to n do 
-> 37 |       l:= !l ^ "____";
-> 38 |     done.
-> Error (warning 35 [unused-for-index]): unused for-loop index j.
-> File "lib/Affichage_table_nimber.ml", lines 76-78, characters 4-8:
-> 76 | ....for j = 0 to n do 
-> 77 |       l:= !l ^ "_____";
-> 78 |     done.
-> Error (warning 35 [unused-for-index]): unused for-loop index j.
-[2]
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl lib/Affichage_table_nimber.ml) > _build/default/lib/.TIPE_Nimber.objs/tIPE_Nimber__Affichage_table_nimber.impl.d
 $ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I lib/.TIPE_Nimber.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/byte/tIPE_Nimber__Projet_Cram.cmo -c -impl lib/Projet_Cram.ml)
 > File "lib/Projet_Cram.ml", line 17, characters 4-12:
 > 17 | let tab_test = [|[|true;true;true|];[|true;false;true|];[|true;false;false|];[|true;false;false|];[|true;false;false|]|];;
 >          ^^^^^^^^
 > Error (warning 32 [unused-value-declaration]): unused value tab_test.
 [2]
-$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I lib/.TIPE_Nimber.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/byte/tIPE_Nimber__Twopins.cmo -c -impl lib/Twopins.ml)
-> File "lib/Twopins.ml", line 25, characters 8-16:
-> 25 | let rec nim_naif board = (* colonnes supposées non vides*)
->              ^^^^^^^^
-> Error (warning 32 [unused-value-declaration]): unused value nim_naif.
-[2]
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.TIPE_Nimber.objs/byte -I lib/.TIPE_Nimber.objs/native -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/native/tIPE_Nimber__Affichage_table_nimber.cmx -c -impl lib/Affichage_table_nimber.ml)
-> File "lib/Affichage_table_nimber.ml", lines 9-11, characters 2-6:
->  9 | ..for j = 0 to n do 
-> 10 |     print_string "____";
-> 11 |   done.
-> Error (warning 35 [unused-for-index]): unused for-loop index j.
-> File "lib/Affichage_table_nimber.ml", lines 36-38, characters 4-8:
-> 36 | ....for j = 0 to n do 
-> 37 |       l:= !l ^ "____";
-> 38 |     done.
-> Error (warning 35 [unused-for-index]): unused for-loop index j.
-> File "lib/Affichage_table_nimber.ml", lines 76-78, characters 4-8:
-> 76 | ....for j = 0 to n do 
-> 77 |       l:= !l ^ "_____";
-> 78 |     done.
-> Error (warning 35 [unused-for-index]): unused for-loop index j.
-[2]
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.TIPE_Nimber.objs/byte -I lib/.TIPE_Nimber.objs/native -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/native/tIPE_Nimber__Twopins.cmx -c -impl lib/Twopins.ml)
-> File "lib/Twopins.ml", line 25, characters 8-16:
-> 25 | let rec nim_naif board = (* colonnes supposées non vides*)
->              ^^^^^^^^
-> Error (warning 32 [unused-value-declaration]): unused value nim_naif.
-[2]
+$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I lib/.TIPE_Nimber.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/byte/tIPE_Nimber__Affichage_table_nimber.cmo -c -impl lib/Affichage_table_nimber.ml)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.TIPE_Nimber.objs/byte -I lib/.TIPE_Nimber.objs/native -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/native/tIPE_Nimber__Projet_Cram.cmx -c -impl lib/Projet_Cram.ml)
 > File "lib/Projet_Cram.ml", line 17, characters 4-12:
 > 17 | let tab_test = [|[|true;true;true|];[|true;false;true|];[|true;false;false|];[|true;false;false|];[|true;false;false|]|];;
 >          ^^^^^^^^
 > Error (warning 32 [unused-value-declaration]): unused value tab_test.
 [2]
-$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I lib/.TIPE_Nimber.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/byte/tIPE_Nimber__Marienbad_reso.cmo -c -impl lib/Marienbad_reso.ml)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.TIPE_Nimber.objs/byte -I lib/.TIPE_Nimber.objs/native -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/native/tIPE_Nimber__Marienbad_reso.cmx -c -impl lib/Marienbad_reso.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.TIPE_Nimber.objs/byte -I lib/.TIPE_Nimber.objs/native -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/native/tIPE_Nimber__Affichage_table_nimber.cmx -c -impl lib/Affichage_table_nimber.ml)
