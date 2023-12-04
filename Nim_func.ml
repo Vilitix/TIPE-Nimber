@@ -76,7 +76,7 @@ let rec add_naif (x:int) (y:int):int =
 
 let mat_multi:(int option array array) = Array.make_matrix 100 100 None;;    
 
-let rec multi x y = (*utilisation de mémoïsation pour la multiplication O(x^2^)*)
+let rec multi x y = (*utilisation de mémoïsation pour la multiplication O(x^2*y^2*log(xy)) dans le pire cas si rien de calculer*)
   if mat_multi.(x).(y) <> None then (Option.get mat_multi.(x).(y)) (* si rien de calculer  *)
   else  
     let set = ref SS.empty in 
@@ -86,8 +86,8 @@ let rec multi x y = (*utilisation de mémoïsation pour la multiplication O(x^2^
     else
       begin 
         for i = 0 to y-1 do
-          for j= 0 to x-1 do (*SS.add O(log(n))  si tout calculer O(xy*log(xy))) sinon O(x^2y^2*log(xy))*)
-            set := SS.add  (add (add (multi i x)  (multi y j)) (multi i j)) !set 
+          for j= 0 to x-1 do (*SS.add O(log(n))  si tout les précedents sont calculés*)
+            set := SS.add  (add (add (multi i x)  (multi y j)) (multi i j)) !set
           done;
         done;
         let result = mex !set in (*O(|set|log(|set|))*)

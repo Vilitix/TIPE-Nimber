@@ -34,9 +34,22 @@ Affichage_table_nimber.cmi: Affichage_table_nimber.mli
 Affichage_table_nimber.cmx: Affichage_table_nimber.ml Affichage_table_nimber.cmi
 	ocamlopt -c $<
 
+Union_find.cmi: Union_find.mli
+	ocamlc -c $<
+
+Union_find.cmx: Union_find.ml Union_find.cmi 
+	ocamlc -c $<	
+
+Projet_Cram.cmi: Projet_Cram.mli
+	ocamlc -c $<
+
+Projet_Cram.cmx: Projet_Cram.ml Projet_Cram.cmi 
+	ocamlc -c $<
 
 
-$(EXEC): Nim_func.cmx Kayles.cmx Twopins.cmx Marienbad_reso.cmx Affichage_table_nimber.cmx test.ml
+
+
+$(EXEC): Nim_func.cmx Kayles.cmx Twopins.cmx Marienbad_reso.cmx Affichage_table_nimber.cmx Union_find.cmx Projet_Cram.cmx test.ml
 	ocamlopt -o $@ $^
 
 clean:
