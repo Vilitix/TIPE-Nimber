@@ -1,0 +1,8 @@
+lib: [
+  "_build/install/default/lib/TIPE_Nimber/META"
+  "_build/install/default/lib/TIPE_Nimber/dune-package"
+  "_build/install/default/lib/TIPE_Nimber/opam"
+]
+bin: [
+  "_build/install/default/bin/TIPE_Nimber"
+]

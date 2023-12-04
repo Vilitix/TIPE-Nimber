@@ -1,0 +1,4 @@
+(executable
+ (public_name TIPE_Nimber)
+ (name main)
+ (libraries TIPE_Nimber))

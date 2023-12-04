@@ -49,9 +49,9 @@ let actualiser_union_find tab =
       if not(tab.(i).(j)) then 
       match i,j with 
       |x,y when ((x = (n-1)) && (y = (p-1))) -> ()
-      |x,y when (x = n-1) -> if (tab.(i).(j+1)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab i (j+1) p)
-      |x,y when (y = (p-1)) ->  if (tab.(i+1).(j)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab (i+1) j p)
-      |x,y -> 
+      |x,_ when (x = n-1) -> if (tab.(i).(j+1)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab i (j+1) p)
+      |_,y when (y = (p-1)) ->  if (tab.(i+1).(j)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab (i+1) j p)
+      |_,_ -> 
         begin 
           if (tab.(i+1).(j)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab i (j+1) p);
           if (tab.(i).(j+1)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab (i+1) j p)
@@ -73,7 +73,7 @@ let is_playable tab i j direction =
     |1 -> if (((i+1)< n) && (not(tab.(i+1).(j)))) then res:= true
     |(-2) -> if (((j+1)< p) && (not(tab.(i).(j+1)))) then res:= true
     |2 -> if ((j>0) && (not(tab.(i).(j-1)))) then res:= true
-    |x -> ();
+    |_ -> ();
   else ();
   !res
 
@@ -87,9 +87,7 @@ let play tab i j direction =
     |1 -> tab.(i+1).(j) <- true
     |(-2) -> tab.(i).(j+1) <- true
     |2 -> tab.(i).(j-1) <- true 
-    |x -> ()
+    |_ -> ()
 ;; 
-  
-let algorithm = 
-  
+    
   (*ajouter avec unir autour des classes d equi et si c est la classe d equi des truck posés  alors actualise *)
