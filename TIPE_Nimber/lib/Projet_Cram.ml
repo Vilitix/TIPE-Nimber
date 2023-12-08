@@ -14,7 +14,6 @@ let print (table) =
   done;
 ;;
 
-let tab_test = [|[|true;true;true|];[|true;false;true|];[|true;false;false|];[|true;false;false|];[|true;false;false|]|];;
 
 let is_empty table i j = 
   table.(i).(j);;
@@ -91,3 +90,13 @@ let play tab i j direction =
 ;; 
     
   (*ajouter avec unir autour des classes d equi et si c est la classe d equi des truck posés  alors actualise *)
+
+(* peudo code algo 
+let algorithm1 tab n = 
+  if 2 classe d'équi au moins faire algo 2
+  else 
+    for i = 0 to n do 
+        for j = 0 to tous les coups possible
+      if (algorithm1 tab(lecoup) i) then true
+      mex 
+    *)

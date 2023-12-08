@@ -5,11 +5,11 @@ let print_int_array arr =
 let rec print_int_array_list lst =
   match lst with
   | [] -> ()
-  | hd::tl ->
+  | hd::tl -> 
     print_int_array hd;
     print_int_array_list tl
 	;;
 
 let tab = [|[|true;true;true|];[|true;false;true|];[|true;false;false|];[|true;false;false|];[|true;false;false|]|];;
-let tab = TIPE_Nimber.actualiser_union_find tab;;
+let Projet_Cram.actualiser_union_find tab;;
 

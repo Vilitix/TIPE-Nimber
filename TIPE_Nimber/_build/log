@@ -3,7 +3,7 @@
 # Shared cache: disabled
 # Workspace root: /home/arthur/Desktop/TIPE/code/TIPE_Nimber
 # Auto-detected concurrency: 8
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_effde0_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_f7d65d_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -152,23 +152,3 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dune_effde0_output
 #      }
 #  }
 $ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I test/.TIPE_Nimber.eobjs/byte -I test/.TIPE_Nimber.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o test/.TIPE_Nimber.eobjs/native/dune__exe__TIPE_Nimber.cmx -c -impl test/TIPE_Nimber.ml)
-> File "test/TIPE_Nimber.ml", line 14, characters 10-43:
-> 14 | let tab = Projet_Cram.actualiser_union_find tab;;
->                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Error: Unbound module Projet_Cram
-[2]
-$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl lib/Affichage_table_nimber.ml) > _build/default/lib/.TIPE_Nimber.objs/tIPE_Nimber__Affichage_table_nimber.impl.d
-$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I lib/.TIPE_Nimber.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/byte/tIPE_Nimber__Projet_Cram.cmo -c -impl lib/Projet_Cram.ml)
-> File "lib/Projet_Cram.ml", line 17, characters 4-12:
-> 17 | let tab_test = [|[|true;true;true|];[|true;false;true|];[|true;false;false|];[|true;false;false|];[|true;false;false|]|];;
->          ^^^^^^^^
-> Error (warning 32 [unused-value-declaration]): unused value tab_test.
-[2]
-$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I lib/.TIPE_Nimber.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/byte/tIPE_Nimber__Affichage_table_nimber.cmo -c -impl lib/Affichage_table_nimber.ml)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.TIPE_Nimber.objs/byte -I lib/.TIPE_Nimber.objs/native -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/native/tIPE_Nimber__Projet_Cram.cmx -c -impl lib/Projet_Cram.ml)
-> File "lib/Projet_Cram.ml", line 17, characters 4-12:
-> 17 | let tab_test = [|[|true;true;true|];[|true;false;true|];[|true;false;false|];[|true;false;false|];[|true;false;false|]|];;
->          ^^^^^^^^
-> Error (warning 32 [unused-value-declaration]): unused value tab_test.
-[2]
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.TIPE_Nimber.objs/byte -I lib/.TIPE_Nimber.objs/native -intf-suffix .ml -no-alias-deps -opaque -open TIPE_Nimber -o lib/.TIPE_Nimber.objs/native/tIPE_Nimber__Affichage_table_nimber.cmx -c -impl lib/Affichage_table_nimber.ml)
