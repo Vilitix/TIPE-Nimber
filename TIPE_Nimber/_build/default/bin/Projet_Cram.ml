@@ -14,7 +14,16 @@ let print (table) =
   done;
 ;;
 
-let tab_test = [|[|true;true;true|];[|true;false;true|];[|true;false;false|];[|true;false;false|];[|true;false;false|]|];;
+let print_uf tab = 
+  let n,p = taille tab in 
+  for i = 0 to (n-1) do 
+    for j = 0 to (p -1) do 
+      Printf.printf "%d  " tab.(i).(j)
+    done;
+    Printf.printf "\n"
+  done;
+;;
+
 
 let is_empty table i j = 
   table.(i).(j);;
@@ -49,9 +58,9 @@ let actualiser_union_find tab =
       if not(tab.(i).(j)) then 
       match i,j with 
       |x,y when ((x = (n-1)) && (y = (p-1))) -> ()
-      |x,y when (x = n-1) -> if (tab.(i).(j+1)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab i (j+1) p)
-      |x,y when (y = (p-1)) ->  if (tab.(i+1).(j)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab (i+1) j p)
-      |x,y -> 
+      |x,_ when (x = n-1) -> if (tab.(i).(j+1)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab i (j+1) p)
+      |_,y when (y = (p-1)) ->  if (tab.(i+1).(j)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab (i+1) j p)
+      |_,_ -> 
         begin 
           if (tab.(i+1).(j)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab i (j+1) p);
           if (tab.(i).(j+1)) then Union_find.union uf (mat_to_tab i j p) (mat_to_tab (i+1) j p)
@@ -73,7 +82,7 @@ let is_playable tab i j direction =
     |1 -> if (((i+1)< n) && (not(tab.(i+1).(j)))) then res:= true
     |(-2) -> if (((j+1)< p) && (not(tab.(i).(j+1)))) then res:= true
     |2 -> if ((j>0) && (not(tab.(i).(j-1)))) then res:= true
-    |x -> ();
+    |_ -> ();
   else ();
   !res
 
@@ -87,49 +96,17 @@ let play tab i j direction =
     |1 -> tab.(i+1).(j) <- true
     |(-2) -> tab.(i).(j+1) <- true
     |2 -> tab.(i).(j-1) <- true 
-    |x -> ()
+    |_ -> ()
 ;; 
-
-let rec compute_outcome (table) = 
-  let n,p = taille table in
-  let tab = actualiser_union_find table in
-  let res = ref false in
-  let i = ref 0 in
-  let j = ref 0 in
-  while ((!res = false) && ((!i) < n)) do
-    while ((!res = false) && ((!j) < p)) do
-      if (not(tab.(!i).(!j))) then 
-        begin
-          if (is_playable tab !i !j (-1)) then 
-            begin
-              play tab !i !j (-1);
-              res := (compute_outcome tab);
-              play tab !i !j (-1);
-            end;
-          if (is_playable tab !i !j 1) then 
-            begin
-              play tab !i !j 1;
-              res := (compute_outcome tab);
-              play tab !i !j 1;
-            end;
-          if (is_playable tab !i !j (-2)) then 
-            begin
-              play tab !i !j (-2);
-              res := (compute_outcome tab);
-              play tab !i !j (-2);
-            end;
-          if (is_playable tab !i !j 2) then 
-            begin
-              play tab !i !j 2;
-              res := (compute_outcome tab);
-              play tab !i !j 2;
-            end;
-        end;
-      j:= !j+1;
-    done;
-    i:= !i+1;
-  done;
-  !res
-;;
-  
+    
   (*ajouter avec unir autour des classes d equi et si c est la classe d equi des truck posés  alors actualise *)
+
+(* peudo code algo 
+let algorithm1 tab n = 
+  if 2 classe d'équi au moins faire algo 2
+  else 
+    for i = 0 to n do 
+        for j = 0 to tous les coups possible
+      if (algorithm1 tab(lecoup) i) then true
+      mex 
+    *)

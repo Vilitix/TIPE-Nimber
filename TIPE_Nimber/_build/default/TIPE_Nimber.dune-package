@@ -1,4 +1,4 @@
 (lang dune 3.7)
 (name TIPE_Nimber)
-(sections (lib .) (bin ../../bin))
-(files (lib (META dune-package opam)) (bin (TIPE_Nimber)))
+(sections (lib .))
+(files (lib (META dune-package opam)))

@@ -10,7 +10,6 @@ homepage: "https://github.com/Vilitix/TIPE-Nimber"
 doc: "https://url/to/documentation"
 bug-reports: "https://github.com/Vilitix/TIPE-Nimber/issues"
 depends: [
-  "ocaml"
   "dune" {>= "3.7"}
   "odoc" {with-doc}
 ]
