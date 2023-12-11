@@ -2,7 +2,7 @@
 let taille table = 
   (Array.length table.(0),Array.length table);;
 
-let print (table) = 
+let print (table)  = 
   let n,p = taille table in 
   for i = 0 to (n-1) do 
     for j = 0 to (p -1) do 
@@ -14,15 +14,6 @@ let print (table) =
   done;
 ;;
 
-let print_uf tab = 
-  let n,p = taille tab in 
-  for i = 0 to (n-1) do 
-    for j = 0 to (p -1) do 
-      Printf.printf "%d  " tab.(i).(j)
-    done;
-    Printf.printf "\n"
-  done;
-;;
 
 
 let is_empty table i j = 
@@ -67,9 +58,18 @@ let actualiser_union_find tab =
         end
       done;
     done;
-    Union_find.get_tab uf
+    uf
   
 
+let print_uf uf table = 
+  let n,p = taille table in 
+  for i = 0 to (n-1) do 
+    for j = 0 to (p -1) do 
+      Printf.printf "%d  " (Union_find.find uf (mat_to_tab i j p))
+    done;
+    Printf.printf "\n"
+  done;
+;;
 
         
 (*direction : (-1 gauche) (1 droite) (2 haut) (-2 bas)*)
@@ -110,3 +110,4 @@ let algorithm1 tab n =
       if (algorithm1 tab(lecoup) i) then true
       mex 
     *)
+

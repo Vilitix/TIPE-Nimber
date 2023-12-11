@@ -1,1 +1,1 @@
-bin/main.ml: Array Projet_Cram
+bin/main.ml: Projet_Cram
