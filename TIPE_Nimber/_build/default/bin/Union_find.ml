@@ -2,10 +2,11 @@
     parent: int array;
     rang: int array;
   }
-   
+
+
   let init n =
     { parent = Array.init n (fun i -> i);
-      rang = Array.make n 0;
+      rang = Array.make n 0; 
     }
    
   let rec find uf x =
@@ -20,15 +21,20 @@
     let racine_y = find uf y in
     if racine_x <> racine_y then begin
       if uf.rang.(racine_x) < uf.rang.(racine_y) then
-        uf.parent.(racine_x) <- racine_y
+        begin
+        uf.parent.(racine_x) <- racine_y;
+        end
       else if uf.rang.(racine_x) > uf.rang.(racine_y) then
-        uf.parent.(racine_y) <- racine_x
-      else begin
+        begin
+        uf.parent.(racine_y) <- racine_x;
+        end
+      else 
+        begin
         uf.parent.(racine_y) <- racine_x;
         uf.rang.(racine_x) <- uf.rang.(racine_x) + 1
-      end
+        end
     end
 
 let get_tab uf = 
   uf.parent
-   
+

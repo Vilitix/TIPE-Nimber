@@ -1,9 +1,9 @@
-# dune test
+# dune exec ./bin/main.exe
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: /home/arthur/Desktop/TIPE/code/TIPE_Nimber
 # Auto-detected concurrency: 8
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_7c6422_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_bbaeb2_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
