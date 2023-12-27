@@ -1,1 +1,1 @@
-bin/Projet_Cram.ml: Array Printf Union_find
+bin/Projet_Cram.ml: Array List Printf Union_find

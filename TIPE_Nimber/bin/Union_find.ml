@@ -1,12 +1,14 @@
   type union_find = {
     parent: int array;
     rang: int array;
+    taille_classe : (int*int*int*int) array;
   }
 
 
   let init n =
     { parent = Array.init n (fun i -> i);
       rang = Array.make n 0; 
+      taille_classe = Array.init n (fun i -> (i,i,i,i));
     }
    
   let rec find uf x =
@@ -38,3 +40,5 @@
 let get_tab uf = 
   uf.parent
 
+let get_tab_c uf = 
+  uf.taille_classe

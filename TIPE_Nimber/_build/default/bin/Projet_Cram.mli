@@ -16,3 +16,6 @@ val actualiser_union_find :
   bool array array ->
   Union_find.union_find -> int -> int -> int -> Union_find.union_find
 val print_matrix : bool array array -> unit
+val init_classe_uf :bool array array -> Union_find.union_find -> unit
+val tab_post_sep : bool array array -> Union_find.union_find -> (bool array array) list
+val perdu : bool array array -> bool
