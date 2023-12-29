@@ -1,1 +1,1 @@
-bin/Projet_Cram.mli: Union_find
+bin/Projet_Cram.mli: Struct_pers

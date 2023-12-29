@@ -1,9 +1,9 @@
-# dune build
+# dune exec ./bin/main.exe
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: /home/arthur/Desktop/TIPE/code/TIPE_Nimber
 # Auto-detected concurrency: 8
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_fb4a90_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_165c28_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -151,9 +151,3 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dune_fb4a90_output
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /usr/bin/ocamldep.opt -modules -intf bin/Projet_Cram.mli) > _build/default/bin/.main.eobjs/dune__exe__Projet_Cram.intf.d
-$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl bin/Projet_Cram.ml) > _build/default/bin/.main.eobjs/dune__exe__Projet_Cram.impl.d
-$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I bin/.main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o bin/.main.eobjs/byte/dune__exe__Projet_Cram.cmi -c -intf bin/Projet_Cram.mli)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o bin/.main.eobjs/native/dune__exe__Projet_Cram.cmx -c -impl bin/Projet_Cram.ml)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o bin/main.exe bin/.main.eobjs/native/dune__exe.cmx bin/.main.eobjs/native/dune__exe__Union_find.cmx bin/.main.eobjs/native/dune__exe__Projet_Cram.cmx bin/.main.eobjs/native/dune__exe__Main.cmx)
