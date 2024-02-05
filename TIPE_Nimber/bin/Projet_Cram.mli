@@ -47,3 +47,4 @@ val play :
 val perdu : bool array array -> bool
 val nimber_exact_naif : bool array array -> int
 val nimber_exact_moins_naif : bool array array -> int
+val resultat_couple : bool array array -> int -> bool

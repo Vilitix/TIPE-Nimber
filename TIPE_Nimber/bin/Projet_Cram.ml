@@ -1,5 +1,4 @@
 module Unionfind = Struct_pers.Make (Struct_pers.New_Arr);;
-
 (*O(1)*)
 let taille table = 
   (Array.length table, Array.length table.(0));;
@@ -379,7 +378,10 @@ let calcul_couple table n =
   let l = split table (Union.find get_tab uf) in 
   match l with
 
-let calcul_somme_couple table uf l
+let calcul_somme_couple table uf n = 
+  let n,p = taille table in
+  let tab_direction = [|-1;1;-2;2|] in
+  let uf = init_uf table in
 
 let nimber table cap = 
   let i = ref 0 
@@ -478,3 +480,73 @@ let nimber_exact_moins_naif table =
     in
   calcul_nim table uf
 
+
+  exception Est_deja_gagner;;
+
+  let resultat_couple table nimber = 
+    (*hors séparation et uf*)
+    let n,p = taille table in
+    let tab_direction = [|-1;1;-2;2|] in  
+    let rec resultat_couple_aux table nimber = 
+
+      try
+        let playable = ref false in
+        for i = 0 to (n-1) do 
+          for j = 0 to (p-1) do 
+            for k = 0 to 3 do 
+              if (is_playable table i j tab_direction.(k)) then 
+                begin
+                  table.(i).(j) <- true;
+                  let l,m = deuxieme_cases_vise i j tab_direction.(k) in
+                  table.(l).(m) <- true;
+                  playable := true;
+                  (if not(resultat_couple_aux table nimber) then raise Est_deja_gagner);
+                
+                table.(i).(j) <- false;
+                table.(l).(m) <- false;
+              end
+          done;
+        done;
+      done;
+      if ((nimber = 0) && (not(!playable))) then false
+      else
+        begin
+
+        for i = 0 to nimber -1 do
+          if not(resultat_couple_aux table i) then raise Est_deja_gagner
+          done;
+
+      (*toutes les options sont perdantes car pas d'exceptions*)
+        false
+        end 
+
+
+      with Est_deja_gagner -> true
+    in 
+    resultat_couple_aux table nimber 
+  ;;
+
+
+    ;;   
+(*let resultat_somme l nimber = 
+  let set = ref Nim_func.SS.empty in
+  let jeu_final::liste_aux = l
+  let f sous_table = SS.add !set (nimber_final table cap) in 
+  List.iter f liste_aux; 
+  let new_nimber = SS.mex set in 
+  resultat_couple jeu_final new_nimber
+;;
+
+
+let nimber_final table cap = 
+  let i = ref 0 
+  while (not(calcul_couple table n) && (i<= cap) ) do 
+    i := i+1
+  done;
+  if i = (cap) then failwith "le nimber est supérieur au max précisé"
+  else i
+;;
+*)
+
+(*stocker dans l'arbre de jeu la positions l'union find et un Option avec None ou son Nimber
+   cas terminal P(défaite,0) = true*)

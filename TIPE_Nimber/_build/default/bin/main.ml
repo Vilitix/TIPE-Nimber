@@ -38,6 +38,10 @@ let rec afficher l =
 ;;
 afficher l;; 
 
-let table2 = [|[|false;false;false;false|];[|false;false;false;false|];[|false;false;false;false|];[|false;false;false;false|];|];;
-Printf.printf "nimber = %d \n" (Projet_Cram.nimber_exact_moins_naif table2);;
+let table2 = [|[|false;false;false|];[|false;false;false|];[|false;false;false|]|];;
+Printf.printf "nimber_moins_naif = %d \n" (Projet_Cram.nimber_exact_moins_naif table2);;
+Printf.printf "nimber_naif = %d \n" (Projet_Cram.nimber_exact_naif table2);;
+if (not(Projet_Cram.resultat_couple table2 0)) then Printf.printf "nimber_final est bon"
+
+
 
