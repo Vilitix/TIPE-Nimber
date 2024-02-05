@@ -479,32 +479,4 @@ let nimber_exact_moins_naif table =
   calcul_nim table uf
 
   
-let test_algo_1 table nimber =
-(*séparation à ajouter avec l'union find*)
-  let n,p = taille table in
-  let tab_direction = [|-1;1;-2;2|] in
-  let rec calcul_nim table nimber = 
-    (*cas de base déjà dedans le mex  d'un ensemble vide est 0*)
-    let res = ref false
-    let played = ref false in
-    for i = 0 to (n-1) do 
-      for j = 0 to (p-1) do 
-        for k = 0 to 3 do 
-          if (is_playable table i j tab_direction.(k)) then 
-            begin
-              table.(i).(j) <- true;
-              let l,m = deuxieme_cases_vise i j tab_direction.(k) in
-              table.(l).(m) <- true;
-              played:=true;
-              if (calcul_nim table nimber) then res:= true; 
-              table.(i).(j) <- false;
-              table.(l).(m) <- false;
-            end
-        done;
-      done;
-    done
-    if nimber = 0 then played && !res
-    else !res
-    in
-    for i = 0 to nimber-1 do 
-      calcul_nim table i 
+
