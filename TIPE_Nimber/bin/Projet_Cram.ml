@@ -349,52 +349,6 @@ let play table uf i j direction =
 
   (*ajouter avec unir autour des classes d equi et si c est la classe d equi des truck posés  alors actualise *)
 
-(* peudo code algo 
-let algorithm1 tab n = 
-  if 2 classe d'équi au moins faire algo 2
-  else 
-    for i = 0 to n do 
-        for j = 0 to tous les coups possible
-      if (algorithm1 tab(lecoup) i) then true
-      mex 
-    
-let play_uf i j  table uf  = (* on a eu Union_find.find x = Union_find.find x après avoir jouer un pion *)
-  
-
-
-
-    let split table tab_uf = 
-      let n,p = taille table in
-      let classe_case_pleine = ref 0 in 
-      let classe_1 = ref 0 in
-      for i = 0 to (n-1) do 
-        for j = 0 to (p-1) do 
-          if table.()
-
-
-
-let calcul_couple table n = 
-  let uf = actualiser_union_find table in
-  let l = split table (Union.find get_tab uf) in 
-  match l with
-
-let calcul_somme_couple table uf n = 
-  let n,p = taille table in
-  let tab_direction = [|-1;1;-2;2|] in
-  let uf = init_uf table in
-
-let nimber table cap = 
-  let i = ref 0 
-  while (not(calcul_couple table n) && (i<= cap) ) do 
-    i := i+1
-  done;
-  if i = (cap) then failwith "le nimber est supérieur au max précisé"
-  else i
-;;
-
-à noter on ne peut pas gagner en moins de coup que n*p/4 ?  car il faut occuper au moins la moitié 
-du jeu pour avoir une chance de gagner (cas du damier cas impossible mais majorant compter le cas n*p impair ? ) et chaque fois on joue 2 cases
-*)
 let perdu table = 
   let n,p = taille table in
   let res = ref true in
@@ -481,26 +435,97 @@ let nimber_exact_moins_naif table =
   calcul_nim table uf
 
 
-  exception Est_deja_gagner;;
 
-  let resultat_couple table nimber = 
+let resultat_couple_old table nimber = 
     (*hors séparation et uf*)
-    let n,p = taille table in
-    let tab_direction = [|-1;1;-2;2|] in  
-    let rec resultat_couple_aux table nimber = 
+  let n,p = taille table in
+  let tab_direction = [|-1;1;-2;2|] in  
+  let rec resultat_couple_aux table nimber = 
+    let playable = ref false in
+    let res = ref false in 
+    for i = 0 to (n-1) do 
+      for j = 0 to (p-1) do 
+        for k = 0 to 3 do 
 
-      try
-        let playable = ref false in
-        for i = 0 to (n-1) do 
-          for j = 0 to (p-1) do 
-            for k = 0 to 3 do 
-              if (is_playable table i j tab_direction.(k)) then 
+          if (is_playable table i j tab_direction.(k)) then 
+            begin
+              table.(i).(j) <- true;
+              let l,m = deuxieme_cases_vise i j tab_direction.(k) in
+              table.(l).(m) <- true;
+              playable := true;
+              (if not(resultat_couple_aux table nimber) then res:=true);
+                
+              table.(i).(j) <- false;
+              table.(l).(m) <- false;
+            end
+        done;
+      done;
+    done;
+    if ((nimber = 0) && (not(!playable))) then false
+    else
+      begin
+
+      for i = 0 to nimber -1 do
+        if not(resultat_couple_aux table i) then res:= true
+        done;
+
+      (*toutes les options sont perdantes car pas d'exceptions*)
+      !res
+      end 
+  in 
+  resultat_couple_aux table nimber 
+  ;;
+
+let cap = 50;;
+
+
+let resultat_couple table nimber uf = 
+  let n,p = taille table in
+    let tab_direction = [|-1;1;-2;2|] in  
+    let rec resultat_couple_aux table nimber uf = 
+      let playable = ref false in
+      let res = ref false in
+      for i = 0 to (n-1) do 
+        for j = 0 to (p-1) do 
+          for k = 0 to 3 do 
+
+            if (is_playable table i j tab_direction.(k)) then 
+              begin
+                table.(i).(j) <- true;
+                let l,m = deuxieme_cases_vise i j tab_direction.(k) in
+                table.(l).(m) <- true;
+                playable := true;
+                let new_uf, new_tab_c = actualiser_union_find table uf i j tab_direction.(k) in
                 begin
-                  table.(i).(j) <- true;
-                  let l,m = deuxieme_cases_vise i j tab_direction.(k) in
-                  table.(l).(m) <- true;
-                  playable := true;
-                  (if not(resultat_couple_aux table nimber) then raise Est_deja_gagner);
+                  match new_tab_c with
+                  |None -> (if not(resultat_couple_aux table nimber new_uf) then res:=true);
+                  |Some tab_c -> 
+                    begin
+
+                      let tab_post_sep = tab_post_sep table new_uf tab_c in
+                      match tab_post_sep with 
+                      |[] -> failwith "appel impossible à la fonction" 
+                      |t::q ->
+                        begin
+                          let new_nimber = ref nimber in
+                          (*appel au dernier algorithme fonction refaite pour problème d'
+                             interdépendance*)
+                          let calcul_nimber_final table = 
+                            let i = ref 0 in
+                            let uf = init_uf table in
+                            while (not(resultat_couple_aux table !i uf ) && (!i<= cap) ) do 
+                              i := !i+1
+                            done;
+                            if !i = (cap) then failwith "le nimber est supérieur au max précisé"
+                            else !i
+                          in
+                          List.iter (fun sous_table -> new_nimber := !new_nimber lxor (calcul_nimber_final sous_table)) q; 
+                          if not(resultat_couple_aux t !new_nimber (init_uf t)) then res:=true
+                        end
+
+                    end
+                end;
+
                 
                 table.(i).(j) <- false;
                 table.(l).(m) <- false;
@@ -513,40 +538,25 @@ let nimber_exact_moins_naif table =
         begin
 
         for i = 0 to nimber -1 do
-          if not(resultat_couple_aux table i) then raise Est_deja_gagner
+          if not(resultat_couple_aux table i uf) then res:= true
           done;
 
       (*toutes les options sont perdantes car pas d'exceptions*)
-        false
+        !res
         end 
-
-
-      with Est_deja_gagner -> true
     in 
-    resultat_couple_aux table nimber 
+    resultat_couple_aux table nimber uf
+  ;;
+  
+  let nimber_non_naif table = 
+    let i = ref 0 in
+    let uf = init_uf table in
+    while ((resultat_couple table !i uf ) && (!i<= cap) ) do 
+      i := !i+1
+    done;
+    if !i = (cap) then failwith "le nimber est supérieur au max précisé"
+    else !i
   ;;
 
 
-    ;;   
-(*let resultat_somme l nimber = 
-  let set = ref Nim_func.SS.empty in
-  let jeu_final::liste_aux = l
-  let f sous_table = SS.add !set (nimber_final table cap) in 
-  List.iter f liste_aux; 
-  let new_nimber = SS.mex set in 
-  resultat_couple jeu_final new_nimber
-;;
 
-
-let nimber_final table cap = 
-  let i = ref 0 
-  while (not(calcul_couple table n) && (i<= cap) ) do 
-    i := i+1
-  done;
-  if i = (cap) then failwith "le nimber est supérieur au max précisé"
-  else i
-;;
-*)
-
-(*stocker dans l'arbre de jeu la positions l'union find et un Option avec None ou son Nimber
-   cas terminal P(défaite,0) = true*)

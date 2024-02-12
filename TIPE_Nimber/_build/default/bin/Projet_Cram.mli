@@ -47,4 +47,7 @@ val play :
 val perdu : bool array array -> bool
 val nimber_exact_naif : bool array array -> int
 val nimber_exact_moins_naif : bool array array -> int
-val resultat_couple : bool array array -> int -> bool
+val resultat_couple_old : bool array array -> int -> bool
+val resultat_couple : bool array array -> int -> Unionfind.t ref -> bool
+val nimber_non_naif : bool array array -> int
+
