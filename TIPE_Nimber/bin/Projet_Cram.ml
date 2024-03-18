@@ -349,15 +349,6 @@ let play table uf i j direction =
 
   (*ajouter avec unir autour des classes d equi et si c est la classe d equi des truck posés  alors actualise *)
 
-let perdu table = 
-  let n,p = taille table in
-  let res = ref true in
-  for i = 0 to (n-1) do 
-    for j = 0 to (p-1) do 
-      if not(table.(i).(j)) then res:= false
-    done;
-  done;
-  !res
 
 (*let reso_naive table = 
   let n,p = taille table in
@@ -479,15 +470,15 @@ let resultat_couple_old table nimber =
 let cap = 50;;
 
 
-let resultat_couple table nimber uf = 
+let resultat_couple table nimber uf= 
   let n,p = taille table in
     let tab_direction = [|-1;1;-2;2|] in  
     let rec resultat_couple_aux table nimber uf = 
       let playable = ref false in
       let res = ref false in
-      for i = 0 to (n-1) do 
-        for j = 0 to (p-1) do 
-          for k = 0 to 3 do 
+      for k = 0 to 3 do 
+        for i = 0 to (n-1) do 
+          for j = 0 to (p-1) do 
 
             if (is_playable table i j tab_direction.(k)) then 
               begin
@@ -558,5 +549,82 @@ let resultat_couple table nimber uf =
     else !i
   ;;
 
+ 
+(*straight forward depth first alpha beta algorithm Cram game *)
 
 
+
+let rec alpha_beta table alpha beta depth joueur = (*va essayer de faire gagner le joueur 0*) 
+  let n,p = taille table in
+  let tab_direction = [|-1;1;-2;2|] in  
+  let playable = ref 0 in
+  let meilleur_coup = ref (None) in
+  let meilleur_score = ref (if joueur = 0 then min_int else max_int) in
+  if depth = 0 then
+    None, min_int
+  else
+    match joueur with
+    | 0 -> 
+      let current_score = ref (min_int) in
+      for k = 0 to 3 do 
+        for i = 0 to (n-1) do 
+          for j = 0 to (p-1) do 
+
+            if (is_playable table i j tab_direction.(k)) then 
+                table.(i).(j) <- true;
+                let l,m = deuxieme_cases_vise i j tab_direction.(k) in
+                table.(l).(m) <- true;
+                playable := 1;
+
+                if !current_score < !beta then
+
+                  let _,score = alpha_beta table alpha beta (depth-1) (1-joueur) in
+                  if score > !current_score then 
+                    begin
+                      meilleur_score := score;
+                      meilleur_coup := Some (i,j,tab_direction.(k));
+                      current_score := score;
+                    end;
+                  alpha := max !alpha !current_score;
+                  table.(i).(j) <- false;
+                  table.(l).(m) <- false;
+        done;
+      done;
+    done;
+    if !playable = 0 then 
+      None, 1
+    else
+      (!meilleur_coup),!meilleur_score
+    | 1 -> 
+      let current_score = ref (max_int) in
+      for k = 0 to 3 do 
+        for i = 0 to (n-1) do 
+          for j = 0 to (p-1) do 
+
+            if (is_playable table i j tab_direction.(k)) then 
+                table.(i).(j) <- true;
+                let l,m = deuxieme_cases_vise i j tab_direction.(k) in
+                table.(l).(m) <- true;
+                playable := 1;
+
+                if !current_score > !alpha then
+
+                  let _,score = alpha_beta table alpha beta (depth-1) (1-joueur) in
+                  if score < !current_score then 
+                    begin
+                      meilleur_score := score;
+                      meilleur_coup := Some (i,j,tab_direction.(k));
+                      current_score := score;
+                    end;
+                  beta := min !beta !current_score;
+                  table.(i).(j) <- false;
+                  table.(l).(m) <- false;
+        done;
+      done;
+    done;
+    if !playable = 0 then 
+          None, (1)
+    else
+      (!meilleur_coup),!meilleur_score  
+    |_ -> failwith "erreur dans le joueur"
+    ;;

@@ -44,10 +44,10 @@ val play :
   int ->
   Unionfind.t ref *
   (int * int * int * int) Struct_pers.New_Arr.data ref option
-val perdu : bool array array -> bool
 val nimber_exact_naif : bool array array -> int
 val nimber_exact_moins_naif : bool array array -> int
 val resultat_couple_old : bool array array -> int -> bool
 val resultat_couple : bool array array -> int -> Unionfind.t ref -> bool
-val nimber_non_naif : bool array array -> int
+val nimber_non_naif : bool array array -> int 
+val alpha_beta : bool array array -> int ref -> int ref -> int -> int -> (int*int*int) option * int
 

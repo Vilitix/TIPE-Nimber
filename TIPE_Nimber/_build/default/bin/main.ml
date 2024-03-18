@@ -38,10 +38,46 @@ let rec afficher l =
 ;;
 afficher l;; 
 
-let table2 = [|[|false;false;false|];[|false;false;false|];[|false;false;false|];[|false;false;false|];|];;
+Printf.printf "\n--------------------------\n";;
+let table2 = [|[|false;false|];[|false;false|];[|false;false|];[|false;false|];|];;
 Printf.printf "nimber_moins_naif = %d \n" (Projet_Cram.nimber_exact_moins_naif table2);;
 Printf.printf "nimber_naif = %d \n" (Projet_Cram.nimber_exact_naif table2);;
 Printf.printf "nimber_pas_naif = %d \n" (Projet_Cram.nimber_non_naif table2 )
 
+let i,j,k = Option.get (fst (Projet_Cram.alpha_beta table2 (ref (min_int)) (ref max_int) 80 0));;
+Printf.printf "i = %d j = %d k = %d \n" i j k;;
 
+(*
+let play_test_a_b table = 
+  while true do
+  match fst (Projet_Cram.alpha_beta table (ref (-max_int)) (ref max_int) 30 0) with 
+  |None -> Printf.printf "Erreur il y a un problème \n"
+  |Some (i,j,direction) -> 
+      if (Projet_Cram.is_playable table i j direction) then 
+        begin
+        table.(i).(j) <- true;
+        let k,l = Projet_Cram.deuxieme_cases_vise i j direction in 
+        table.(k).(l) <- true;
+        end
+      else failwith "coup incorrect"
+      ;
 
+  Projet_Cram.print_matrix table;
+  let i1,j1,k1 = int_of_string (read_line ()) , int_of_string (read_line ()) , int_of_string (read_line ()) in
+  flush stdout;
+  if (Projet_Cram.is_playable table i j direction) then 
+    begin
+    table.(i1).(j1) <- true;
+    let k,l = Projet_Cram.deuxieme_cases_vise i1 j1 k1 in 
+    table.(k).(l) <- true;
+    end
+  else failwith "coup incorrect"
+  ;
+  Projet_Cram.print_matrix table;
+
+  done;
+;;
+
+play_test_a_b table2;;
+
+*)
