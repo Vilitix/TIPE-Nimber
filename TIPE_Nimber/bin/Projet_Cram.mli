@@ -45,12 +45,5 @@ val play :
   Unionfind.t ref *
   (int * int * int * int) Struct_pers.New_Arr.data ref option
 val nimber_exact_naif : bool array array -> int
-val nimber_exact_moins_naif : bool array array -> int
-val resultat_couple_old : bool array array -> int -> bool
-val resultat_couple : bool array array -> int -> Unionfind.t ref -> bool
-val nimber_non_naif : bool array array -> int 
-val alpha_beta : bool array array -> int -> int -> int -> int -> (int * int * int) option * int * int
-val play_and_print_alpha_beta_vs_random : bool array array -> unit
 val perdu : bool array array -> bool
-val random_strat : bool array array -> (int * int * int)
-val minmax : bool array array -> int -> (int * int * int) option * int
+val nimber_exact_moins_naif : bool array array -> int

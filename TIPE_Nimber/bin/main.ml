@@ -42,7 +42,7 @@ afficher l;;
 Printf.printf "\n--------------------------\n";;
 let table2 = Array.make_matrix 3 3 false;;
 Printf.printf "\nnimber = %d \n" (Projet_Cram.nimber_exact_naif table2);;
-Projet_Cram.play_and_print_alpha_beta_vs_random table2;;
+Cram_alpha_beta.play_and_print_alpha_beta_vs_random table2;;
 
 (*
 let table2 = [|[|false;false;false;false|];[|false;false;false;false|];[|false;false;false;false|];|];;
