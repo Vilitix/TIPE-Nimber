@@ -569,6 +569,7 @@ let perdu table =
 exception Beta_cutoff of (((int * int * int)option)*int*int);;
 exception Alpha_cutoff of (((int * int * int)option)*int*int);;
 
+
 let rec alpha_beta table alpha beta depth joueur = 
   try
     let alpha' = ref alpha in
@@ -598,6 +599,8 @@ let rec alpha_beta table alpha beta depth joueur =
                     begin
                     
                       let _,count,score = alpha_beta table !alpha' !beta' (depth-1) (1-joueur) in
+                      table.(i).(j) <- false;
+                      table.(l).(m) <- false;
                       compteur := !compteur + count; (*cmpt*)
                       (
                       if score > !current_score then 
@@ -617,9 +620,8 @@ let rec alpha_beta table alpha beta depth joueur =
                     
                       alpha' := max !alpha' !current_score;
                     end;
-
-                  table.(i).(j) <- false;
-                  table.(l).(m) <- false;
+                    table.(i).(j) <- false; (*pour assurer que c'est remis a false si jamais on a pas la premiere condition*)
+                    table.(l).(m) <- false;
                 end
               done;
             done;
@@ -647,6 +649,8 @@ let rec alpha_beta table alpha beta depth joueur =
                       begin
                           
                         let _,count,score = alpha_beta table !alpha' !beta' (depth-1) (1-joueur) in
+                        table.(i).(j) <- false;
+                        table.(l).(m) <- false;
                         compteur := !compteur + count; (*cmpt*)
                         if score < !current_score then 
                           begin
@@ -663,9 +667,8 @@ let rec alpha_beta table alpha beta depth joueur =
                           end;
                           beta' := min !beta' !current_score;
                       end;
-                        
-                    table.(i).(j) <- false;
-                    table.(l).(m) <- false;
+                      table.(i).(j) <- false;
+                      table.(l).(m) <- false;
                   end
                 done;
               done;
@@ -677,8 +680,7 @@ let rec alpha_beta table alpha beta depth joueur =
       |_ -> failwith "erreur dans le joueur"
   with
   | Beta_cutoff (x,y,z) -> x,y,z
-  | Alpha_cutoff (x,y,z) -> x,y,z
-                
+  | Alpha_cutoff (x,y,z) -> x,y,z 
               ;;             
 
 
@@ -754,7 +756,7 @@ let random_strat table =
       
       let depth = 500 in 
       let meilleur_coup,nb_etat,score = alpha_beta table min_int max_int depth 0 in
-      Printf.printf "nb d'etats explores %d\n" nb_etat;
+      Printf.printf "\n nb d'etats explores %d\n" nb_etat;
       
       match meilleur_coup with
       
