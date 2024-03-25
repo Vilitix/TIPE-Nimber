@@ -1,1 +1,1 @@
-bin/main.ml: Option Printf Projet_Cram
+bin/main.ml: Array Printf Projet_Cram Random

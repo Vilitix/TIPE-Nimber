@@ -1,6 +1,6 @@
+Random.self_init ();;
 
-
-
+(*
 let table = [|[|false;false;false;false;false;false|];[|false;false;false;false;false;false|];[|false;false;false;false;false;false|];[|false;false;false;false;false;false|];[|false;false;false;false;false;false|]|];;
 
 let uf = Projet_Cram.init_uf table;;
@@ -37,16 +37,46 @@ let rec afficher l =
   |tab::q -> Projet_Cram.print_matrix tab; afficher q
 ;;
 afficher l;; 
+*)
 
 Printf.printf "\n--------------------------\n";;
-let table2 = [|[|false;false|];[|false;false|];[|false;false|];[|false;false|];|];;
+let table2 = Array.make_matrix 3 4 false;;
+Printf.printf "\nnimber = %d \n" (Projet_Cram.nimber_exact_naif table2);;
+Projet_Cram.play_and_print_alpha_beta_vs_random table2;;
+
+(*
+let table2 = [|[|false;false;false;false|];[|false;false;false;false|];[|false;false;false;false|];|];;
 Printf.printf "nimber_moins_naif = %d \n" (Projet_Cram.nimber_exact_moins_naif table2);;
 Printf.printf "nimber_naif = %d \n" (Projet_Cram.nimber_exact_naif table2);;
 Printf.printf "nimber_pas_naif = %d \n" (Projet_Cram.nimber_non_naif table2 )
+let _,_ = Projet_Cram.play table2 uf 1 0 (-2);;
+let _,_ = Projet_Cram.play table2 uf 0 1 (-2);;
 
-let i,j,k = Option.get (fst (Projet_Cram.alpha_beta table2 (ref (min_int)) (ref max_int) 80 0));;
+
+
+let i,j,k = Option.get (fst (Projet_Cram.alpha_beta table2 (ref (min_int)) (ref max_int) 800 0));;
+Printf.printf "\nle joueur 1 joue et veut perdre\n";
 Printf.printf "i = %d j = %d k = %d \n" i j k;;
+Printf.printf "\n score = %d\n";;
+let _,_ = Projet_Cram.play table2 uf i j (k);;
+let () = Projet_Cram.print_matrix table2;;
+*)
+(*
+let i,j,k = Option.get (fst (Projet_Cram.alpha_beta table2 (ref (min_int)) (ref max_int) 800 0));;
+Printf.printf "i = %d j = %d k = %d \n" i j k;;
+let _,_ = Projet_Cram.play table2 uf i j (k);;
+let () = Projet_Cram.print_matrix table2;;
 
+let i,j,k = Option.get (fst (Projet_Cram.alpha_beta table2 (ref (min_int)) (ref max_int) 800 0));;
+Printf.printf "i = %d j = %d k = %d \n" i j k;;
+let _,_ = Projet_Cram.play table2 uf i j (k);;
+let () = Projet_Cram.print_matrix table2;;
+
+let i,j,k = Option.get (fst (Projet_Cram.alpha_beta table2 (ref (min_int)) (ref max_int) 800 0));;
+Printf.printf "i = %d j = %d k = %d \n" i j k;;
+let _,_ = Projet_Cram.play table2 uf i j (k);;
+let () = Projet_Cram.print_matrix table2;;
+*)
 (*
 let play_test_a_b table = 
   while true do
