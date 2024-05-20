@@ -357,7 +357,7 @@ let perdu table =
   done;
   !res
 
-  
+  (*
 let iteration parameter n p:((int*int*int) list) =
   let l = ref []
   match parameter with 
@@ -367,7 +367,7 @@ let iteration parameter n p:((int*int*int) list) =
         for i = p-1 downto 0 do 
           l:= ::!l
 
-
+*)
 (*note pour plus tard lorsque l'on separe on refait bien tout l'union find pcq sinon lorsqu'on joue l'union de la classe de la nouvelle case 
    qui est dans la même classe que toutes les autres met tout dans la même classe
    besoin d'actualiser les coordonnée dans ce cas pour séparer*)

@@ -38,11 +38,12 @@ let rec afficher l =
 ;;
 afficher l;; 
 *)
-
+(*
 Printf.printf "\n--------------------------\n";;
 let table2 = Array.make_matrix 3 3 false;;
 Printf.printf "\nnimber = %d \n" (Projet_Cram.nimber_exact_naif table2);;
 Cram_alpha_beta.play_and_print_alpha_beta_vs_random table2;;
+*)
 
 (*
 let table2 = [|[|false;false;false;false|];[|false;false;false;false|];[|false;false;false;false|];|];;
@@ -111,3 +112,27 @@ let play_test_a_b table =
 play_test_a_b table2;;
 
 *)
+
+let tab_try = [|
+    Array.make_matrix 1 1 false;
+    Array.make_matrix 1 2 false;
+    Array.make_matrix 1 3 false;
+    Array.make_matrix 2 3 false;
+    Array.make_matrix 3 4 false|]
+
+let len_tab tab = (Array.length tab) * (Array.length tab.(0));;
+
+
+let measure_time f len tab = 
+  let channel = open_out "/home/arthur/Desktop/TIPE/sortie_time.txt" in
+  for i = 0 to Array.length tab - 1 do
+    let t1 = Sys.time () in
+    ignore (f tab.(i));
+    let t2 = Sys.time () in
+    Printf.fprintf channel "%d : %f\n" (len tab.(i))  (t2 -. t1) ; (*taille entrée : temps*);
+  done;
+  close_out channel;
+;;
+
+measure_time Cram_reso.nimber_non_naif len_tab tab_try;;
+

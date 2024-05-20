@@ -1,4 +1,4 @@
-# dune exec bin/main.exe --watch
+# dune exec ./bin/main.exe
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Shared cache location: /home/arthur/.cache/dune/db
@@ -20,10 +20,4 @@
 #        }
 #  ; instrument_with = []
 #  }
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_9b8ec1_output
-$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl bin/Projet_Cram.ml) > _build/default/bin/.main.eobjs/dune__exe__Projet_Cram.impl.d
-> File "bin/Projet_Cram.ml", line 363, characters 2-7:
-> 363 |   match parameter with 
->         ^^^^^
-> Error: Syntax error
-[2]
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_784e46_output

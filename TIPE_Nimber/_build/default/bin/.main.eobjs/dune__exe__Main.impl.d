@@ -1,1 +1,1 @@
-bin/main.ml: Array Cram_alpha_beta Printf Projet_Cram Random
+bin/main.ml: Array Cram_reso Printf Random Sys

@@ -14,7 +14,7 @@ let rec alpha_beta table alpha beta depth joueur =
     let meilleur_score = ref (if joueur = 0 then min_int else max_int) in
     let compteur = ref 0 in
     if depth = 0 then 
-      failwith "trop profond" (*pour l'instant pg autre probleme*)
+      failwith "trop profond" (*pas d'heuristique pour le moment*)
     else
       match joueur with
       | 0 ->
@@ -34,13 +34,12 @@ let rec alpha_beta table alpha beta depth joueur =
                       let _,count,score = alpha_beta table !alpha' !beta' (depth-1) (1-joueur) in
                       table.(i).(j) <- false;
                       table.(l).(m) <- false;
-                      compteur := !compteur + count; (*cmpt*)
+                      compteur := !compteur + count; 
                       (
                       if score > !current_score then 
                         begin
                           meilleur_score := score;
                           meilleur_coup := Some (i,j,tab_direction.(k));
-                      (*Printf.printf "nouveau meilleur coup pour le joueur 0 : %d %d %d score : %d\n" i j tab_direction.(k) score;*)
                           current_score := score;
                           if !current_score > !beta' then 
                             begin
@@ -53,7 +52,7 @@ let rec alpha_beta table alpha beta depth joueur =
                     
                       alpha' := max !alpha' !current_score;
                     end;
-                    table.(i).(j) <- false; (*pour assurer que c'est remis a false si jamais on a pas la premiere condition*)
+                    table.(i).(j) <- false; (*pour assurer que c'est remis à false si jamais on a pas la première condition*)
                     table.(l).(m) <- false;
                 end
               done;
@@ -181,35 +180,36 @@ let random_strat table =
 !i,!j,tab_direction.(!k)
 ;;
 
-  let play_and_print_alpha_beta_vs_random table =
-    while not (Projet_Cram.perdu table) do  
-      (*
-      let meilleur_coup, score = minmax table 0 in 
-      *)
-      
-      let depth = 500 in 
-      let meilleur_coup,nb_etat,score = alpha_beta table min_int max_int depth 0 in
-      Printf.printf "\n nb d'etats explores %d\n" nb_etat;
-      
-      match meilleur_coup with
-      
-      | None -> failwith "erreur il n y a pas de coup ou il a perdu"
-      | Some (i, j, k) ->
+
+let play_and_print_alpha_beta_vs_random table =
+  while not (Projet_Cram.perdu table) do  
+    (*
+    let meilleur_coup, score = minmax table 0 in 
+    *)
+    
+    let depth = 500 in 
+    let meilleur_coup,nb_etat,score = alpha_beta table min_int max_int depth 0 in
+    Printf.printf "\n nb d'etats explores %d\n" nb_etat;
+    
+    match meilleur_coup with
+    
+    | None -> failwith "erreur il n y a pas de coup ou il a perdu"
+    | Some (i, j, k) ->
+      begin
+        table.(i).(j) <- true;
+        let l, m = Projet_Cram.deuxieme_cases_vise i j k in
+        table.(l).(m) <- true;
+        Printf.printf "meilleur coup : %d %d %d, score = %d \n" i j k score;
+        Projet_Cram.print_matrix table;
+      end;
+      if not( Projet_Cram.perdu table) then
         begin
-          table.(i).(j) <- true;
-          let l, m = Projet_Cram.deuxieme_cases_vise i j k in
+          let coup0, coup1, coup2 =  (random_strat table) in
+          Printf.printf "coup random : %d %d %d\n" coup0 coup1 coup2;
+          table.(coup0).(coup1) <- true;
+          let l, m = Projet_Cram.deuxieme_cases_vise coup0 coup1 coup2 in
           table.(l).(m) <- true;
-          Printf.printf "meilleur coup : %d %d %d, score = %d \n" i j k score;
           Projet_Cram.print_matrix table;
-        end;
-        if not( Projet_Cram.perdu table) then
-          begin
-            let coup0, coup1, coup2 =  (random_strat table) in
-            Printf.printf "coup random : %d %d %d\n" coup0 coup1 coup2;
-            table.(coup0).(coup1) <- true;
-            let l, m = Projet_Cram.deuxieme_cases_vise coup0 coup1 coup2 in
-            table.(l).(m) <- true;
-            Projet_Cram.print_matrix table;
-          end
-    done
-  ;;
+        end
+      done
+    ;;
