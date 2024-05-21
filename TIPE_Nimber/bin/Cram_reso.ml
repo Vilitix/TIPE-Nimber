@@ -8,17 +8,18 @@ let resultat_couple table nimber uf=
     let rec resultat_couple_aux table nimber uf = 
       let playable = ref false in
       let res = ref false in
-      for k = 0 to 3 do 
-        for i = 0 to (n-1) do 
-          for j = 0 to (p-1) do 
+      let i = ref (n-1) in
+      let j = ref 0 in 
+      let k = ref (-2) in 
+      while (!i <> -1) do 
 
-            if (Projet_Cram.is_playable table i j tab_direction.(k)) then 
+            if (Projet_Cram.is_playable table !i !j tab_direction.(!k)) then 
               begin
-                table.(i).(j) <- true;
-                let l,m = Projet_Cram.deuxieme_cases_vise i j tab_direction.(k) in
+                table.(!i).(!j) <- true;
+                let l,m = Projet_Cram.deuxieme_cases_vise !i !j tab_direction.(!k) in
                 table.(l).(m) <- true;
                 playable := true;
-                let new_uf, new_tab_c = Projet_Cram.actualiser_union_find table uf i j tab_direction.(k) in
+                let new_uf, new_tab_c = Projet_Cram.actualiser_union_find table uf !i !j tab_direction.(!k) in
                 begin
                   match new_tab_c with
                   |None -> (if not(resultat_couple_aux table nimber new_uf) then res:=true);
@@ -46,15 +47,19 @@ let resultat_couple table nimber uf=
                           if not(resultat_couple_aux t !new_nimber (Projet_Cram.init_uf t)) then res:=true
                         end
 
-                    end
+                    end;
                 end;
 
                 
-                table.(i).(j) <- false;
+                table.(!i).(!j) <- false;
                 table.(l).(m) <- false;
-              end
-          done;
-        done;
+              end;
+              (
+          let newi,newj,newk = Projet_Cram.iter table (!i,!j,!k) in
+          i := newi;
+          j := newj;
+          k := newk;
+          )
       done;
       if ((nimber = 0) && (not(!playable))) then false
       else

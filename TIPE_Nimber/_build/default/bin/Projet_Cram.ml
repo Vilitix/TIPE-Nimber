@@ -389,6 +389,18 @@ let iteration parameter n p:((int*int*int) list) =
       done;
 *)
 
+
+let iter table (i,j,k) =
+  let n, p = taille table in
+  match (i, j, k) with
+  | 0, y, (- 2) when y = p-2-> (n - 1), 0, -1 (* fin horizontal *)
+  | 1, y, -1 when y = p-1-> -1, -1, -1 (* fin vertical, fin tout court *)
+  | x, y, -2 when y = p-2-> (x - 1), 0, -2 (* fin d'une ligne en horizontal *)
+  | x, y, -1 when y = (p-1)-> (x - 1), 0, -1
+  | x, y, -2 -> x, (y + 1), -2
+  | x, y, -1 -> x, (y + 1), -1
+  |_ -> failwith "probleme d'itération"
+;;
 let nimber_exact_naif table = 
   let n,p = taille table in
   let tab_direction = [|-1;1;-2;2|] in
@@ -413,6 +425,7 @@ let nimber_exact_naif table =
     Nim_func.mex !set
     in
   calcul_nim table
+
 
 
 

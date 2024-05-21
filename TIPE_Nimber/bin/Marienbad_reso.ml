@@ -87,7 +87,6 @@ let graphe tab =
   done;
   recopie_label_nimber nb channel tab_label_nimber;
   Printf.fprintf channel "}";
-close_out channel;
 ignore (Sys.command "dot -Tpng -o /home/arthur/Desktop/TIPE/sortie.png /home/arthur/Desktop/TIPE/sortie.txt"); (*execution pour actualiser le graphe après un coup*)
 ;;
 

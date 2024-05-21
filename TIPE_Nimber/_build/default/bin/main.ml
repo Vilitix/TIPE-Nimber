@@ -113,6 +113,7 @@ play_test_a_b table2;;
 
 *)
 
+(*
 let tab_try = [|
     Array.make_matrix 1 1 false;
     Array.make_matrix 1 2 false;
@@ -133,6 +134,11 @@ let measure_time f len tab =
   done;
   close_out channel;
 ;;
+*)
 
-measure_time Cram_reso.nimber_non_naif len_tab tab_try;;
 
+for i = 1 to 19 do
+  for j = i to 19  do 
+    Zobrist.store_hash_table (i,j) (Zobrist.generate_hash_table (i,j))
+  done;
+done;
