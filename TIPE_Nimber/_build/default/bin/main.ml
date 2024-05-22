@@ -1,6 +1,8 @@
-Random.self_init ();;
 
 (*
+Random.self_init ();;
+
+
 let table = [|[|false;false;false;false;false;false|];[|false;false;false;false;false;false|];[|false;false;false;false;false;false|];[|false;false;false;false;false;false|];[|false;false;false;false;false;false|]|];;
 
 let uf = Projet_Cram.init_uf table;;
@@ -26,7 +28,7 @@ let () = Projet_Cram.print_uf uf table ;;
 let uf,_ = Projet_Cram.play table uf 0 5 (1);;
 let () = Projet_Cram.print_matrix table;;
 let () = Projet_Cram.print_uf uf table ;; 
-let uf,tab_opt = Projet_Cram.play table uf 2 4 (-1);;
+let uf,tab_opt = Projet_Cram.play table uf 4 0 (-1);;
 let () = Projet_Cram.print_matrix table;;
 let () = Projet_Cram.print_uf uf table;; 
 
@@ -37,6 +39,7 @@ let rec afficher l =
   |tab::q -> Projet_Cram.print_matrix tab; afficher q
 ;;
 afficher l;; 
+
 *)
 (*
 Printf.printf "\n--------------------------\n";;
@@ -136,9 +139,28 @@ let measure_time f len tab =
 ;;
 *)
 
+Printf.printf("%d\n") (Cram_reso.nimber_non_naif [|[|false;false|];[|false;false|]|]);;
+Printf.printf("%d\n") (Projet_Cram.nimber_exact_naif [|[|false;false|];[|false;false|]|]);;
 
-for i = 1 to 19 do
-  for j = i to 19  do 
-    Zobrist.store_hash_table (i,j) (Zobrist.generate_hash_table (i,j))
+Zobrist.restore ();;
+
+(*
+let test_all_tab n m = 
+   let tab = Array.make_matrix n m false in 
+   let rec test_tab i j = 
+    match i,j with 
+    |x,y when(x=(n-1)) && (y = (m-1)) -> ignore(Cram_reso.nimber_non_naif tab);tab.(i).(j) <- true;ignore(Cram_reso.nimber_non_naif)
+    |x,y when y = (m-1) -> ignore (Cram_reso.nimber_non_naif tab) ;test_tab (x+1) 0;tab.(i).(j) <- true;test_tab (x+1) 0 
+    |x,y -> ignore (Cram_reso.nimber_non_naif tab); test_tab (x) (y+1);tab.(i).(j) <- true;test_tab (x) (y+1)
+   in 
+   test_tab 0 0
+  ;;
+
+for i = 2 to 2 do 
+  for j = i to 2 do 
+    test_all_tab i j;
+    Zobrist.save ();
   done;
 done;
+*)
+

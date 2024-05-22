@@ -6,5 +6,5 @@ module Unionfind :
     val union : t -> int -> int -> t
   end
 
-val resultat_couple : bool array array -> int -> Unionfind.t ref -> bool
+val resultat_couple : bool array array -> int -> Unionfind.t ref -> int -> bool
 val nimber_non_naif : bool array array -> int 

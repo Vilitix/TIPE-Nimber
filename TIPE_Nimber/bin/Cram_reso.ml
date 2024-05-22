@@ -1,87 +1,104 @@
 module Unionfind = Struct_pers.Make (Struct_pers.New_Arr);;
 let cap = 50;;
 
+let mat_hash = Array.init 19 (fun i -> Array.init 19 (fun j -> Zobrist.get_hash_table (i,j) ));; 
 
-let resultat_couple table nimber uf= 
+ 
+ let rec resultat_couple table nimber uf (hash:int) = 
   let n,p = Projet_Cram.taille table in
-    let tab_direction = [|-1;1;-2;2|] in  
-    let rec resultat_couple_aux table nimber uf = 
-      let playable = ref false in
-      let res = ref false in
-      let i = ref (n-1) in
-      let j = ref 0 in 
-      let k = ref (-2) in 
-      while (!i <> -1) do 
-
-            if (Projet_Cram.is_playable table !i !j tab_direction.(!k)) then 
-              begin
-                table.(!i).(!j) <- true;
-                let l,m = Projet_Cram.deuxieme_cases_vise !i !j tab_direction.(!k) in
-                table.(l).(m) <- true;
-                playable := true;
-                let new_uf, new_tab_c = Projet_Cram.actualiser_union_find table uf !i !j tab_direction.(!k) in
-                begin
-                  match new_tab_c with
-                  |None -> (if not(resultat_couple_aux table nimber new_uf) then res:=true);
-                  |Some tab_c -> 
-                    begin
-
-                      let tab_post_sep = Projet_Cram.tab_post_sep table new_uf tab_c in
-                      match tab_post_sep with 
-                      |[] -> failwith "appel impossible à la fonction" 
-                      |t::q ->
-                        begin
-                          let new_nimber = ref nimber in
-                          (*appel au dernier algorithme fonction refaite pour problème d'
-                             interdépendance*)
-                          let calcul_nimber_final table = 
-                            let i = ref 0 in
-                            let uf = Projet_Cram.init_uf table in
-                            while (not(resultat_couple_aux table !i uf ) && (!i<= cap) ) do 
-                              i := !i+1
-                            done;
-                            if !i = (cap) then failwith "le nimber est supérieur au max précisé"
-                            else !i
-                          in
-                          List.iter (fun sous_table -> new_nimber := !new_nimber lxor (calcul_nimber_final sous_table)) q; 
-                          if not(resultat_couple_aux t !new_nimber (Projet_Cram.init_uf t)) then res:=true
-                        end
-
-                    end;
-                end;
-
-                
-                table.(!i).(!j) <- false;
-                table.(l).(m) <- false;
-              end;
-              (
-          let newi,newj,newk = Projet_Cram.iter table (!i,!j,!k) in
-          i := newi;
-          j := newj;
-          k := newk;
-          )
-      done;
-      if ((nimber = 0) && (not(!playable))) then false
-      else
+  Projet_Cram.print_matrix table;
+  assert (n<=p); (*pour eviter les symétries*)
+  let res = Hashtbl.find_opt Zobrist.hash_table (n,p,Int32.of_int hash) in
+  if res != None then begin Printf.printf "con";Printf.printf"hash : %d\n" hash;Printf.printf "%d" (Int32.to_int (Option.get res));(Int32.to_int (Option.get res)) != 0 end
+  else
+  begin
+    let playable = ref false in
+    let res = ref false in
+    let i = ref (p-1) in
+    let j = ref 0 in 
+    let k = ref (-2) in 
+    while (!i <> -1) do 
+      
+      if (Projet_Cram.is_playable table !i !j !k) then 
         begin
-
+        table.(!i).(!j) <- true;
+        let l,m = Projet_Cram.deuxieme_cases_vise !i !j !k in
+        table.(l).(m) <- true;
+        let new_hash = hash lxor (Int32.to_int mat_hash.(n).(p).((!i)*(!j)).(0)) lxor (Int32.to_int mat_hash.(n).(p).((!i)*(!j)).(1))
+        lxor (Int32.to_int mat_hash.(n).(p).(l*m).(0)) lxor (Int32.to_int mat_hash.(n).(p).(l*m).(1)) in 
+        playable := true;
+        
+        let new_uf, new_tab_c = Projet_Cram.actualiser_union_find table uf !i !j !k in
+        begin
+          match new_tab_c with
+          |None -> (if not(resultat_couple table nimber new_uf new_hash ) then res:=true);
+          |Some tab_c -> 
+            begin
+              
+              let tab_post_sep = Projet_Cram.tab_post_sep table new_uf tab_c in
+              match tab_post_sep with 
+              |[] -> failwith "appel impossible à la fonction" 
+              |t::q ->
+                begin
+                  let new_nimber = ref nimber in
+                  (*appel au dernier algorithme fonction refaite pour problème d'
+                  interdépendance*)
+                  let calcul_nimber_final table_fun = 
+                    let i = ref 0 in
+                    let hash = Zobrist.init_hash table_fun in
+                    let uf = Projet_Cram.init_uf table_fun in
+                    while (not(resultat_couple table_fun !i uf hash ) && (!i<= cap) ) do 
+                      i := !i+1
+                    done;
+                    if !i = (cap) then failwith "le nimber est supérieur au max précisé"
+                    else !i
+                in
+                List.iter (fun sous_table -> new_nimber := !new_nimber lxor (calcul_nimber_final sous_table)) q; 
+                if not(resultat_couple t !new_nimber (Projet_Cram.init_uf t) (Zobrist.init_hash t)) then res:=true
+                end
+              
+            end;
+          end;
+          
+          
+          table.(!i).(!j) <- false;
+          table.(l).(m) <- false;
+        end;
+        (
+        let newi,newj,newk = Projet_Cram.iter table (!i,!j,!k) in
+        i := newi;
+        j := newj;
+        k := newk;
+        Printf.printf "i : %d, j : %d, k: %d\n" !i !j !k;
+        )
+      done;
+      
+      if ((nimber = 0) && (not(!playable))) then begin Hashtbl.add Zobrist.hash_table (n,p,Int32.of_int hash) 0l;false end
+      else
+      begin
+        
         for i = 0 to nimber -1 do
-          if not(resultat_couple_aux table i uf) then res:= true
+          if not(resultat_couple table i uf hash ) then res:= true
           done;
-
-      (*toutes les options sont perdantes car pas d'exceptions*)
-        !res
+        (if !res = false then Hashtbl.add Zobrist.hash_table (n,p,Int32.of_int hash) 0l); !res
         end 
-    in 
-    resultat_couple_aux table nimber uf
+    end
   ;;
   
-  let nimber_non_naif table = 
-    let i = ref 0 in
-    let uf = Projet_Cram.init_uf table in
-    while ((resultat_couple table !i uf ) && (!i<= cap) ) do 
-      i := !i+1
-    done;
+
+
+let nimber_non_naif table = 
+  let n,p = Projet_Cram.taille table in
+  let i = ref 0 in
+  let hash = Zobrist.init_hash table in
+  if not(Hashtbl.mem Zobrist.hash_table (n,p,Int32.of_int hash))then 
+    begin
+      let uf = Projet_Cram.init_uf table in
+      while ((resultat_couple table !i uf hash ) && (!i<= cap) ) do 
+        i := !i+1
+      done;
     if !i = (cap) then failwith "le nimber est supérieur au max précisé"
-    else !i
-  ;;
+    else begin Printf.printf "add dans non naif\n"; Hashtbl.add Zobrist.hash_table (n,p,Int32.of_int hash) (Int32.of_int !i);!i end
+    end
+  else Int32.to_int (Hashtbl.find Zobrist.hash_table (n,p,Int32.of_int hash))
+;;

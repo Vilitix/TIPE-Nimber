@@ -1,4 +1,4 @@
-# dune exec ./bin/main.exe
+# dune exec bin/main.exe
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Shared cache location: /home/arthur/.cache/dune/db
@@ -20,4 +20,4 @@
 #        }
 #  ; instrument_with = []
 #  }
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_765c1d_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_18b2a6_output

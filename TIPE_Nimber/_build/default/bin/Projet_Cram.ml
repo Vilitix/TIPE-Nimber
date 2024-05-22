@@ -227,16 +227,25 @@ let actualiser_classes table =
     for j = 0 to p - 1 do
       if not table.(i).(j) then
         begin
+          Printf.printf "i = %d, j = %d\n" i j;
           match i, j with
           | x, y when x = n - 1 && y = p - 1 -> ()
           | x, _ when x = n - 1 ->
             if not(table.(i).(j + 1)) then
               let classe_to_add = Unionfind.find !uf (mat_to_tab (i + 1) (j + 2) (p + 2)) in
               let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add) in
-              uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
               let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
+              uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
               let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
-              tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i)) (*+2 car on étudie déjà j+1*)
+              
+              Printf.printf "%d, %d ,%d, %d premier cas to_add \n" xmin_i xmax_i ymin_i ymax_i;
+              Printf.printf "%d, %d ,%d, %d premier cas \n" xmin xmax ymin ymax;
+              Printf.printf "%d, %d ,%d, %d premier cas' \n" (min xmin_i xmin) (max xmax xmax_i) (min ymin ymin_i) (max (max ymax (j+2)) ymax_i);
+              Printf.printf "classe finale %d \n" classe_finale;
+              tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
+              tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
+              let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale)  in
+              Printf.printf "i = %d xmax : %d, xmin : %d, ymax : %d, ymin : %d \n" i xmax xmin ymax ymin; (*+2 car on étudie déjà j+1*)
 
           | _, y when y = p - 1 ->
             if not(table.(i + 1).(j)) then
@@ -245,7 +254,11 @@ let actualiser_classes table =
               uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 2) (j + 1) (p + 2));
               let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
               let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
-              tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i)) (*+2 car on étudie déjà i+1*)
+              Printf.printf "%d, %d ,%d, %d deux cas \n" xmin xmax ymin ymax;
+              Printf.printf "classe finale %d \n" classe_finale;
+              tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
+              tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
+               (*+2 car on étudie déjà i+1*)
 
           | _, _ ->
               let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
@@ -255,17 +268,23 @@ let actualiser_classes table =
                 
                 let classe_to_add1 = Unionfind.find !uf (mat_to_tab (i + 2) (j + 1) (p + 2)) in
               let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add1) in
+              Printf.printf "%d, %d ,%d, %d 3 cas \n" xmin xmax ymin ymax;
+              Printf.printf "classe finale %d \n" classe_finale;
                 uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 2) (j + 1) (p + 2));
-                tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale)  ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i)
-                ));
+                tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale)  ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
+                tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add1) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
+                );
 
               if not(table.(i).(j + 1)) then (
 
                 let classe_to_add2 = Unionfind.find !uf (mat_to_tab (i + 1) (j + 2) (p + 2)) in
               let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add2) in
+              Printf.printf "%d, %d ,%d, %d 4 cas \n" xmin xmax ymin ymax;
+              Printf.printf "classe finale %d \n" classe_finale;
                 uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
-                tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i)
-                ));
+                tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
+                tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add2) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
+                );
               
         end
       else uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) !classe_0 ; classe_0:= Unionfind.find !uf 0
@@ -273,6 +292,14 @@ let actualiser_classes table =
   done;
   uf,!tab_c
 
+
+let print_xmax tab_c = (*pour tests d'erreurs*)
+  for i = 0 to 50 do 
+    
+    let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get tab_c i in
+    Printf.printf "i = %d xmax : %d, xmin : %d, ymax : %d, ymin : %d \n" i xmax xmin ymax ymin
+  done;
+;;
     
 
 (*O(n*p*?) si séparation sinon O(?)*)
@@ -296,28 +323,40 @@ let tab_post_sep table uf tab_c =
   let liste_res = ref [] in
   (*liste de taille au max 4 car un coup peut séparer le tableau en 4 parties au maximum*)
   let classe_0 = Unionfind.find !uf 0 in
+  let tab_verif_classe = Array.make ((n+2)*(p+2)) true in (*si a false tableau deja créée*)
   for i = 0 to (((n+2)*(p+2))-1) do 
     let classe_en_cours = Unionfind.find !uf i in
-    if ((i = (classe_en_cours)) && (classe_en_cours != classe_0)  )  then (
+    if ((tab_verif_classe.(classe_en_cours)) && (classe_en_cours != classe_0)  )  then (
         
-        let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get tab_c i in
-        let new_tab = Array.make_matrix (xmax-xmin+1) (ymax-ymin+1) true in
-        liste_res:= (new_tab,i,xmin,xmax,ymin,ymax) :: !liste_res
+        let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get tab_c classe_en_cours in
+        tab_verif_classe.(classe_en_cours) <- false;
+        let new_x = min (xmax-xmin+1) (ymax-ymin+1) in 
+        let new_y = max (xmax-xmin+1) (ymax-ymin+1) in
+        let new_tab = Array.make_matrix new_x new_y true in
+        liste_res:= (new_tab,classe_en_cours,xmin,xmax,ymin,ymax) :: !liste_res
+
              
     );
 
     let k,l = tab_to_mat i (p+2) in
+    
     if ((k!= 0) && (l!=0) && (k!=n+1) && (l!= p+1) ) then 
+
       begin
       (*O(alpha(n)) car liste de taille <= 4*)
     let rec parcourir_liste liste = 
       match liste with 
       |[] -> () (*pas d'erreur si grosse partie recouverte de jetons ils n'ont pas de tableau *)
-      |(tab,j,xmin,xmax,ymin,ymax)::q -> 
+      |(tab,j,xmin_l,xmax_l,ymin_l,ymax_l)::q -> 
         begin
-          if (k>=xmin && k<=xmax && l>=ymin && l<=ymax) then 
-            tab.(k-xmin).(l-ymin) <- (Unionfind.find !uf (mat_to_tab (k) (l) (p+2))) != j
-            
+          if ((k-xmin_l >=0) && (0<=(xmax_l-k)) && ((l-ymin_l)>=0) && ((ymax_l-l)>=0)) then 
+            begin
+
+            if ((xmax_l-xmin_l+1) > (ymax_l-ymin_l+1)) then 
+              tab.(l-ymin_l).(k-xmin_l) <- (Unionfind.find !uf (mat_to_tab (k) (l) (p+2))) != j
+            else
+            tab.(k-xmin_l).(l-ymin_l) <- (Unionfind.find !uf (mat_to_tab (k) (l) (p+2))) != j
+            end
           else parcourir_liste q
         end
       in

@@ -1,1 +1,1 @@
-bin/main.ml: Random Zobrist
+bin/main.ml: Cram_reso Printf Projet_Cram Zobrist

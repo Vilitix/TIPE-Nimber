@@ -24,9 +24,6 @@ module Projet_Cram = Dune__exe__Projet_Cram
 (** @canonical Dune__exe.Struct_pers *)
 module Struct_pers = Dune__exe__Struct_pers
 
-(** @canonical Dune__exe.TP_1chap12 *)
-module TP_1chap12 = Dune__exe__TP_1chap12
-
 (** @canonical Dune__exe.Twopins *)
 module Twopins = Dune__exe__Twopins
 
