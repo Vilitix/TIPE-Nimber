@@ -19,33 +19,7 @@ let search_pattern board:int array list = (*renvoi une liste de tous les jeu *)
     else (Array.sub board j (n-j))::l
   in
   aux board [] 0 0;;
-
-
-(*
-let rec nim_naif board = (* colonnes supposées non vides*)
-  let set = ref Nim_func.SS.empty in
-  let n = Array.length board in
-  for i = 0 to (n - 1) do
-    if (i = 0) then
-      begin 
-      set := Nim_func.SS.add (nim_naif (Array.sub board 2 (n-2))) !set;
-      if (board.(0) != 1) then set := Nim_func.SS.add (nim_naif (Array.sub board 1 (n-1))) !set
-      end
-    else if (i = (n - 1)) then
-      begin
-            if board.(i) = 2 then
-              set := Nim_func.SS.add (nim_naif (Array.sub board 0 (n - 1))) !set;
-      end
-    else
-      begin
-        set := Nim_func.SS.add (Nim_func.add (nim_naif (Array.sub board 0 i)) (nim_naif (Array.sub board (i + 2) (n - i - 2)))) !set;
-        if (board.(i) != 1)
-        then set := Nim_func.SS.add (Nim_func.add (nim_naif (Array.sub board 0 i)) (nim_naif (Array.sub board (i + 1) (n - i - 1)))) !set
-      end
-    done;
-    (Nim_func.mex !set)
-  ;;
- *)
+ 
 let rec nim_naif board = (* colonnes supposées non vides*)
   let set = ref Nim_func.SS.empty in
   let n = Array.length board in

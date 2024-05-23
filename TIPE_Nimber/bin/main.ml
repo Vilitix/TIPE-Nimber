@@ -139,28 +139,39 @@ let measure_time f len tab =
 ;;
 *)
 
-Printf.printf("%d\n") (Cram_reso.nimber_non_naif [|[|false;false|];[|false;false|]|]);;
-Printf.printf("%d\n") (Projet_Cram.nimber_exact_naif [|[|false;false|];[|false;false|]|]);;
-
 Zobrist.restore ();;
+(*
+Printf.printf("%d\n") (Cram_reso.nimber_non_naif [|[|false;true;true;true|];[|true;true;false;false|];[|true;false;false;false|]|]);;
+Printf.printf("%d\n") (Projet_Cram.nimber_exact_naif [|[|false;true;true;true|];[|true;true;false;false|];[|true;false;false;false|]|]);;
+*)
+
 
 (*
-let test_all_tab n m = 
-   let tab = Array.make_matrix n m false in 
-   let rec test_tab i j = 
-    match i,j with 
-    |x,y when(x=(n-1)) && (y = (m-1)) -> ignore(Cram_reso.nimber_non_naif tab);tab.(i).(j) <- true;ignore(Cram_reso.nimber_non_naif)
-    |x,y when y = (m-1) -> ignore (Cram_reso.nimber_non_naif tab) ;test_tab (x+1) 0;tab.(i).(j) <- true;test_tab (x+1) 0 
-    |x,y -> ignore (Cram_reso.nimber_non_naif tab); test_tab (x) (y+1);tab.(i).(j) <- true;test_tab (x) (y+1)
-   in 
-   test_tab 0 0
-  ;;
 
-for i = 2 to 2 do 
-  for j = i to 2 do 
-    test_all_tab i j;
-    Zobrist.save ();
-  done;
-done;
+let vrai_test_all_tab n m = 
+  let tab = Array.make_matrix n m false in
+  let rec test_tab i j k =
+    if i = -1 then ()
+    else
+      begin
+        ignore (Cram_reso.nimber_non_naif tab);
+        let newi, newj, newk = Projet_Cram.iter tab (i, j, k) in
+        if Projet_Cram.is_playable tab i j k then
+          begin
+            let t, l = Projet_Cram.deuxieme_cases_vise i j k in
+            tab.(i).(j) <- true;
+            tab.(t).(l) <- true;
+            ignore (Cram_reso.nimber_non_naif tab);
+            test_tab newi newj newk
+          end
+        else
+          test_tab newi newj newk
+      end
+  in
+  test_tab (n - 1) 0 (-2)
+;;
 *)
+
+let () = 
+Printf.printf "%d" (Cram_reso.nimber_non_naif (Array.make_matrix 5 6 false));
 

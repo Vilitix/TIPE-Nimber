@@ -6,3 +6,4 @@ val generate_hash_table : int * int -> int32 array array
 val store_hash_table : int * int -> int32 array array -> unit
 val get_hash_table : int * int -> int32 array array
 val init_hash : bool array array -> int
+val save_single : int->int->unit

@@ -227,7 +227,6 @@ let actualiser_classes table =
     for j = 0 to p - 1 do
       if not table.(i).(j) then
         begin
-          Printf.printf "i = %d, j = %d\n" i j;
           match i, j with
           | x, y when x = n - 1 && y = p - 1 -> ()
           | x, _ when x = n - 1 ->
@@ -313,6 +312,7 @@ let actualiser_union_find table uf i j direction  =
     if check_chemin tab_voisins_classe uf then
       (print_uf uf table;
       let uf, new_tab_c = actualiser_classes table in 
+      print_uf uf table;
       uf, Some new_tab_c)
     else uf, None
   else failwith "coup incorrect"

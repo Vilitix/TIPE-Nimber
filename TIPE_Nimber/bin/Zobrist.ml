@@ -9,8 +9,8 @@ let extract_key line =
       | _ -> failwith "format mauvais"
     in
     i, j, hash
-  | _ ->
-    failwith "format mauvais"
+  | _->failwith "format mauvais"
+
 let restore () = 
   let channel = open_in "/home/arthur/Desktop/TIPE/data_Cram/Hash.txt" in
   let rec aux () = 
@@ -32,6 +32,11 @@ let save () =
   Hashtbl.iter (fun (i,j,hash) (value:int32) -> Printf.fprintf channel "%d,%d;%li\n%li\n" i j hash value) hash_table;
   close_out channel;;
 
+let save_single hash nimber = 
+  let channel = open_out_gen [Open_append] 0o644 "/home/arthur/Desktop/TIPE/data_Cram/Hash.txt" in
+  Printf.fprintf channel "%d\n%d\n" hash nimber;
+  close_out channel;;
+
 (*chaine de bits générés aléatoirement dans un tableau 2D nb de case*2 si case 0 rien sinon pièce*)
 let generate_hash_table (i,j) =
   let tab_hash = Array.make_matrix (i*j) 2 0l in 
@@ -48,12 +53,12 @@ let store_hash_table (i,j) tab =
     Printf.fprintf channel "%li\n%li\n" tab.(i).(0) tab.(i).(1);
   done;;
 
-let get_hash_table (i,j) =
+let get_hash_table (i,j) = 
   let file = "/home/arthur/Desktop/TIPE/data_Cram/" ^ string_of_int i ^ "_" ^ string_of_int j ^ ".txt" in
-  let tab = Array.make_matrix (i*j) 2 0l in
-  if (i<= j) then 
+  let tab = Array.make_matrix ((i*j)) 2 0l in 
+  if (i<= j)&&(i!=0)&&(j!=0) then 
     begin
-    if not(Sys.file_exists file)  then
+    if not(Sys.file_exists file)   then
       let res = generate_hash_table (i,j) in
       store_hash_table (i,j) res;
       res
@@ -67,7 +72,7 @@ let get_hash_table (i,j) =
       tab
     end
     
-  else Array.make_matrix (i*j) 2 0l;; (*cas pour initialiser la matrice de hash_table dans Cram_reso*)
+  else Array.make_matrix ((i*j)+1) 2 0l;; (*cas pour initialiser la matrice de hash_table dans Cram_reso*)
 ;;
 
 

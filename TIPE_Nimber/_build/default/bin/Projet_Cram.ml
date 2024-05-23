@@ -313,6 +313,7 @@ let actualiser_union_find table uf i j direction  =
     if check_chemin tab_voisins_classe uf then
       (print_uf uf table;
       let uf, new_tab_c = actualiser_classes table in 
+      print_uf uf table;
       uf, Some new_tab_c)
     else uf, None
   else failwith "coup incorrect"
