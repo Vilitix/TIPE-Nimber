@@ -138,8 +138,8 @@ let measure_time f len tab =
   close_out channel;
 ;;
 *)
-
-let copy =Zobrist.restore ();;
+(*
+let copy =Zobrist.restore ();; 
 (*
 Printf.printf("%d\n") (Cram_reso.nimber_non_naif [|[|false;true;true;true|];[|true;true;false;false|];[|true;false;false;false|]|]);;
 Printf.printf("%d\n") (Projet_Cram.nimber_exact_naif [|[|false;true;true;true|];[|true;true;false;false|];[|true;false;false;false|]|]);;
@@ -147,7 +147,7 @@ Printf.printf("%d\n") (Projet_Cram.nimber_exact_naif [|[|false;true;true;true|];
 
 
 
-(**
+
 let vrai_test_all_tab n m = 
   let tab = Array.make_matrix n m false in
   let rec test_tab i j k =
@@ -171,10 +171,10 @@ let vrai_test_all_tab n m =
   in
   test_tab (n - 1) 0 (-2)
 ;;
-*)
 
 
-let table = [|[|false;false;false;false;false|]|];;
+
+
 
 (*
   let test_iter table = 
@@ -202,7 +202,7 @@ let table = [|[|false;false;false;false;false|]|];;
   test_iter table;;
   Printf.printf "%d \n" (Projet_Cram.nimber_exact_moins_naif table);;
   *)
-  (*
+  
 for i = 1 to 5 do 
   for j = i to 5 do 
     vrai_test_all_tab i j;
@@ -211,7 +211,13 @@ done
 ;;
 
 
-*)
-if (Cram_reso.resultat_couple table 0 (Projet_Cram.init_uf table) (Zobrist.init_hash table) ) then Printf.printf "vrai \n" ;;
+
+
   
+Zobrist.save copy;;
+*)
+let copy = Zobrist.restore ();;
+let table = [|[|false;false;false|];[|false;false;false|]|];;
+
+Printf.printf "nimber table : %d" (Cram_reso.nimber_non_naif table);;
 Zobrist.save copy;;

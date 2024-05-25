@@ -19,17 +19,14 @@ let rec resultat_couple table nimber uf (hash:int) =
   begin
     let playable = ref false in
     let res = ref false in
-    (*
-    let i = ref (n-1) in
-    let j = ref 0 in 
-    let k = ref (-2) in
-    *) 
+    
     let i = ref (n/2) in
     let k = ref (-1) in 
     let j = ref (p/2) in 
     while ((!i <> -1) && (!res != true) && (n*p != 1)) do 
       if (Projet_Cram.is_playable table !i !j !k) then 
         begin
+          Printf.printf "coup %d %d %d\n" !i !j !k;
         table.(!i).(!j) <- true;
         let l,m = Projet_Cram.deuxieme_cases_vise !i !j !k in
         table.(l).(m) <- true;
@@ -39,11 +36,13 @@ let rec resultat_couple table nimber uf (hash:int) =
         let new_uf, new_tab_c = Projet_Cram.actualiser_union_find table uf !i !j !k in
         begin
           match new_tab_c with
-          |_ when !res = true -> () (*éviter des appels récursifs inutiles*)
-          |None -> (if not(resultat_couple table nimber new_uf new_hash ) then begin Projet_Cram.print_matrix table;res:=true end);
+          |_ when !res = true -> Printf.printf "short\n";() (*éviter des appels récursifs inutiles*)
+          |None -> (if not(resultat_couple table nimber new_uf new_hash ) then begin Printf.printf "no sep option perdante\n";Projet_Cram.print_matrix table;res:=true end);
           |Some tab_c -> 
             begin
+              Printf.printf "appel 2coupe\n";
               let tab_post_sep = Projet_Cram.tab_post_sep table new_uf tab_c in
+              Printf.printf "taille tab post sep %d\n" (List.length tab_post_sep);
               match tab_post_sep with 
               |[] -> failwith "appel impossible à la fonction\n" 
               |t::q ->
@@ -52,17 +51,24 @@ let rec resultat_couple table nimber uf (hash:int) =
                   (*appel au dernier algorithme fonction refaite pour problème d'
                   interdépendance*)
                   let calcul_nimber_final table_fun = 
+                    Printf.printf "appel calc final \n";
                     let i = ref 0 in
-                    let hash = Zobrist.init_hash table_fun in
-                    let uf = Projet_Cram.init_uf table_fun in
-                    while (not(resultat_couple table_fun !i uf hash ) && (!i<= cap) ) do 
+                    let hash_intern = Zobrist.init_hash table_fun in
+                    let uf_intern = Projet_Cram.init_uf table_fun in
+                    (*let nfun,pfun = Projet_Cram.taille table_fun in
+                    if not(Hashtbl.mem Zobrist.hash_table (nfun,pfun,hash_intern))then *)
+                      begin
+                    while ((resultat_couple table_fun !i uf_intern hash_intern ) && (!i<= cap) ) do 
                       i := !i+1
                     done;
                     if !i = cap then failwith "le nimber est supérieur au max précisé\n"
                     else !i
+                    end
+                    (*else (Hashtbl.find Zobrist.hash_table (nfun,pfun,hash_intern)) *)
                 in
                 List.iter (fun sous_table -> new_nimber := !new_nimber lxor (calcul_nimber_final sous_table)) q; 
-                if not(resultat_couple t !new_nimber (Projet_Cram.init_uf t) (Zobrist.init_hash t)) then res:=true
+                Printf.printf "nouveau nimber %d\n" !new_nimber;
+                if not((resultat_couple t !new_nimber (Projet_Cram.init_uf t) (Zobrist.init_hash t))) then begin Printf.printf "true tot\n";res:=true end
                 end
               
             end;
@@ -176,7 +182,7 @@ let rec resultat_couple table nimber uf (hash:int) =
                     else !i
                 in
                 List.iter (fun sous_table -> new_nimber := !new_nimber lxor (calcul_nimber_final sous_table)) q; 
-                if not(resultat_couple t !new_nimber (Projet_Cram.init_uf t) (Zobrist.init_hash t)) then res:=true
+                if (resultat_couple t !new_nimber (Projet_Cram.init_uf t) (Zobrist.init_hash t)) then res:=true
                 end
               
             end;
