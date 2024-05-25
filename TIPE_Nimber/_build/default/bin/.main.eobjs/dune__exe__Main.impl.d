@@ -1,1 +1,1 @@
-bin/main.ml: Array Cram_reso Printf Zobrist
+bin/main.ml: Cram_reso Printf Projet_Cram Zobrist

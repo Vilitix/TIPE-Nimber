@@ -48,4 +48,3 @@ val nimber_exact_naif : bool array array -> int
 val iter : 'a array array -> int * int * int -> int * int * int
 val perdu : bool array array -> bool
 val nimber_exact_moins_naif : bool array array -> int
-val print_xmax : (int * int * int * int) Struct_pers.New_Arr.t -> unit

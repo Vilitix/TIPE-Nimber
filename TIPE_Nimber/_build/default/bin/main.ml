@@ -139,15 +139,15 @@ let measure_time f len tab =
 ;;
 *)
 
-Zobrist.restore ();;
+let copy =Zobrist.restore ();;
 (*
 Printf.printf("%d\n") (Cram_reso.nimber_non_naif [|[|false;true;true;true|];[|true;true;false;false|];[|true;false;false;false|]|]);;
 Printf.printf("%d\n") (Projet_Cram.nimber_exact_naif [|[|false;true;true;true|];[|true;true;false;false|];[|true;false;false;false|]|]);;
 *)
 
 
-(*
 
+(**
 let vrai_test_all_tab n m = 
   let tab = Array.make_matrix n m false in
   let rec test_tab i j k =
@@ -156,6 +156,7 @@ let vrai_test_all_tab n m =
       begin
         ignore (Cram_reso.nimber_non_naif tab);
         let newi, newj, newk = Projet_Cram.iter tab (i, j, k) in
+        Printf.printf "i = %d j = %d k = %d, n %d, m %d\n \n" i j k n m;
         if Projet_Cram.is_playable tab i j k then
           begin
             let t, l = Projet_Cram.deuxieme_cases_vise i j k in
@@ -172,6 +173,45 @@ let vrai_test_all_tab n m =
 ;;
 *)
 
-let () = 
-Printf.printf "%d" (Cram_reso.nimber_non_naif (Array.make_matrix 5 6 false));
 
+let table = [|[|false;false;false;false;false|]|];;
+
+(*
+  let test_iter table = 
+    let n,p = Projet_Cram.taille table in 
+    let i = ref (n/2) in
+    let k = ref (-1) in 
+     (*sinon out of bound initialement*)
+    let j = ref (p/2) in 
+    while !i<>(-1) do 
+      (if Projet_Cram.is_playable table !i !j !k then
+        (
+      let v,l = Projet_Cram.deuxieme_cases_vise !i !j !k in
+      table.(!i).(!j) <-true ;
+      table.(v).(l) <- true;
+      Projet_Cram.print_matrix table;
+      table.(v).(l) <- false;
+      table.(!i).(!j) <- false;
+        ));
+      let newi,newj,newk = Cram_alpha_beta.iter_heur table (!i,!j,!k) in
+        i := newi;
+        j := newj;
+        k := newk;
+    done;;
+  let table = [|[|false;false;false;false;false|]|];;
+  test_iter table;;
+  Printf.printf "%d \n" (Projet_Cram.nimber_exact_moins_naif table);;
+  *)
+  (*
+for i = 1 to 5 do 
+  for j = i to 5 do 
+    vrai_test_all_tab i j;
+  done;
+done
+;;
+
+
+*)
+if (Cram_reso.resultat_couple table 0 (Projet_Cram.init_uf table) (Zobrist.init_hash table) ) then Printf.printf "vrai \n" ;;
+  
+Zobrist.save copy;;

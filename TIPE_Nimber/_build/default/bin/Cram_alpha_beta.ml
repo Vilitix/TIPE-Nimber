@@ -2,19 +2,86 @@
 exception Beta_cutoff of (((int * int * int)option)*int*int);;
 exception Alpha_cutoff of (((int * int * int)option)*int*int);;
 
+let get_under_vertical_pos table i j =
+  let n,_ = Projet_Cram.taille table in
+  match i with 
+  |l when ((l+2) < n) && (Projet_Cram.is_playable table (l+2) j (-2)) -> Some (l+2,j,-2)
+  |l when ((l+1) < n) && (Projet_Cram.is_playable table (l+1) j (-1)) -> Some(l+1,j,-1)
+  |_ -> None
+;;
 
-let rec alpha_beta table alpha beta depth joueur = 
-  try
-    let alpha' = ref alpha in
-    let beta' = ref beta in 
-    let n,p = Projet_Cram.taille table in
-    let tab_direction = [|-1;1;-2;2|] in
-    let playable = ref 0 in
-    let meilleur_coup = ref (None) in
-    let meilleur_score = ref (if joueur = 0 then min_int else max_int) in
-    let compteur = ref 0 in
-    if depth = 0 then 
-      failwith "trop profond" (*pas d'heuristique pour le moment*)
+let get_up_vertical_pos table i j =
+  match i with
+  |l when ((l-2) >= 0) && (Projet_Cram.is_playable table (l-2) j (-2)) -> Some (l-2,j,-2)
+  |l when ((l-1) >= 0) && (Projet_Cram.is_playable table (l-1) j (-1)) -> Some(l-1,j,-1)
+  |_ -> None
+;;
+
+let get_right_horizontal_pos table i j=
+  let _,p = Projet_Cram.taille table in
+  match j with
+  |c when ((c+2) < p) && (Projet_Cram.is_playable table i (c+2) (-1)) -> Some (i,c+2,-1)
+  |c when ((c+1) < p) && (Projet_Cram.is_playable table i (c+1) (-2)) -> Some(i,c+1,-2)
+  |_ -> None
+
+(*
+let iter_heur table (i,j,k)  = (*seule ligne verticale importante car dans tous les cas il y a aura séparation et 
+   et n<= p (plus rapide à séparer) (même après séparation)*)
+  let n,_ = Projet_Cram.taille table in
+  let l,_ = Projet_Cram.deuxieme_cases_vise i j k in
+  let coup = ref (get_up_vertical_pos table (min l i) j) in 
+  let ligne = ref (i+1) in
+  while (!coup = None)&&(!ligne < 1)&&(!ligne >= (n-1)) do 
+    if i < (n/2) then 
+      begin
+      coup := get_up_vertical_pos table !ligne j;
+      ligne := !ligne + 1;
+      end
+    else
+      begin
+      coup := get_under_vertical_pos table !ligne j;
+      ligne := !ligne - 1;
+      end
+  done;
+  if !coup = None then Projet_Cram.iter table (i,j,k) (*garde fou car la table est censé être séparé avant*)
+  else
+    match !coup with
+    |Some (a,b,c) -> a,b,c
+    |None -> failwith "erreur dans iter_heur"
+;;
+*)
+
+let iter_heur table (i,j,k) =
+  let n,p = Projet_Cram.taille table in 
+  if n*p = 1 then (-1,-1,-1)
+  else
+  match i,j,k with 
+  |i,j,k when  (j= (p/2)) && (i <= (n/2)) && (k=(-1)) ->  if i>2 then (i-2),j,(-1) else (if (n/2 + 2)< n then (n/2 +2 ,p/2,-1) else (n/2,p/2,-2))
+  |i,j,k when  (j= (p/2)) && (i > (n/2)) && (k=(-1)) ->if ((i + 2) < n) then (i + 2),j,(-1) else (n/2,p/2,-2)
+  |i,j,k when (j=p/2) && (k = -2) && (i<= (n/2)) -> if (i>0) then (i-1,j,-2) else (if (n/2 +1)<n then (n/2 +1,p/2,-2) else ((n-1),0,-1))
+  |i,j,k when (j=p/2) && (k = -2) && (i> (n/2)) -> if ((i + 1) < n) then (i + 1),j,(-2) else ((n-1),0,-1)
+  |i, j, k when (j != (p/2)) -> 
+    let newi,newj,newk = Projet_Cram.iter table (i,j,k) in 
+    if (newj = (p/2)) then (Projet_Cram.iter table (newi,newj,newk))
+    else newi,newj,newk
+  (*fonctionne pour k = -1 ou -2 car dans tous les cas i est la plus basse ligne du précédent coup*) 
+  |_ -> failwith "erreur d itération"
+  (* le 0 0 -2 est bien nouveau coup car p/2 > 0 car j>1 (cas 1 1 trivial)*)
+let alpha_beta_coup table i j k depth = 
+  
+  let rec alpha_beta table alpha beta depth joueur = 
+    try
+      let alpha' = ref alpha in
+      let beta' = ref beta in 
+      let n,p = Projet_Cram.taille table in
+      let tab_direction = [|-1;1;-2;2|] in
+      let playable = ref 0 in
+      let meilleur_coup = ref (None) in
+      let meilleur_score = ref (if joueur = 0 then min_int else max_int) in
+      let compteur = ref 0 in
+      if depth = 0 then 
+        Some (iter_heur table (i,j,k)), 0, 2 (*heuristique à prioriser pour couper le tableau,
+      ce qui est mieux qu'avoir des coups gagnants car il y valeurs connues pour les tables plus petites*)
     else
       match joueur with
       | 0 ->
@@ -30,7 +97,7 @@ let rec alpha_beta table alpha beta depth joueur =
                   playable := 1;
                   if !current_score < !beta' then
                     begin
-                    
+                      
                       let _,count,score = alpha_beta table !alpha' !beta' (depth-1) (1-joueur) in
                       table.(i).(j) <- false;
                       table.(l).(m) <- false;
@@ -38,81 +105,86 @@ let rec alpha_beta table alpha beta depth joueur =
                       (
                       if score > !current_score then 
                         begin
-                          meilleur_score := score;
-                          meilleur_coup := Some (i,j,tab_direction.(k));
-                          current_score := score;
-                          if !current_score > !beta' then 
-                            begin
-                        
-                              raise (Beta_cutoff (Some(i,j,tab_direction.(k)),!compteur,!current_score)) 
-                        
-                            end;
-                        end
-                        );
-                    
+                        meilleur_score := score;
+                        meilleur_coup := Some (i,j,tab_direction.(k));
+                        current_score := score;
+                        if !current_score > !beta' then 
+                          begin
+                          
+                          raise (Beta_cutoff (Some(i,j,tab_direction.(k)),!compteur,!current_score)) 
+                          
+                        end;
+                      end
+                      );
+                      
                       alpha' := max !alpha' !current_score;
                     end;
                     table.(i).(j) <- false; (*pour assurer que c'est remis à false si jamais on a pas la première condition*)
                     table.(l).(m) <- false;
-                end
-              done;
-            done;
-          done;
-          if !playable = 0 then
-            None,1,-1
-          else
-            !meilleur_coup,!compteur,!meilleur_score
-            
-            
-      | 1 -> 
-        let current_score = ref (max_int) in
-          for k = 0 to 3 do 
-            for i = 0 to (n-1) do 
-              for j = 0 to (p-1) do 
-                if (Projet_Cram.is_playable table i j tab_direction.(k)) then 
-                  begin
-                    table.(i).(j) <- true;
-                    let l,m = Projet_Cram.deuxieme_cases_vise i j tab_direction.(k) in
-                    table.(l).(m) <- true;
-                    playable := 1;
-                      
-                    if !current_score > !alpha' then
-                        
-                      begin
-                          
-                        let _,count,score = alpha_beta table !alpha' !beta' (depth-1) (1-joueur) in
-                        table.(i).(j) <- false;
-                        table.(l).(m) <- false;
-                        compteur := !compteur + count; (*cmpt*)
-                        if score < !current_score then 
-                          begin
-                          meilleur_score := score;
-                          meilleur_coup := Some (i,j,tab_direction.(k));
-                          (*Printf.printf "nouveau meilleur coup pour le joueur 1 : %d %d %d score : %d\n" i j tab_direction.(k) score;*)
-                          current_score := score;
-                          if !current_score < !alpha' then 
-                            begin
-                              
-                              raise (Alpha_cutoff (Some(i,j,tab_direction.(k)),!compteur,!current_score))
-                              
-                            end;
-                          end;
-                          beta' := min !beta' !current_score;
-                      end;
-                      table.(i).(j) <- false;
-                      table.(l).(m) <- false;
                   end
                 done;
               done;
             done;
-          if !playable = 0 then
-            None,!compteur, 1
-          else
-            !meilleur_coup,!compteur,!meilleur_score 
-      |_ -> failwith "erreur dans le joueur"
-  with
-  | Beta_cutoff (x,y,z) -> x,y,z
-  | Alpha_cutoff (x,y,z) -> x,y,z 
+            if !playable = 0 then
+              None,1,-1
+            else
+              !meilleur_coup,!compteur,!meilleur_score
+              
+              
+              | 1 -> 
+                let current_score = ref (max_int) in
+                for k = 0 to 3 do 
+                  for i = 0 to (n-1) do 
+                    for j = 0 to (p-1) do 
+                      if (Projet_Cram.is_playable table i j tab_direction.(k)) then 
+                        begin
+                        table.(i).(j) <- true;
+                        let l,m = Projet_Cram.deuxieme_cases_vise i j tab_direction.(k) in
+                        table.(l).(m) <- true;
+                        playable := 1;
+                        
+                        if !current_score > !alpha' then
+                          
+                          begin
+                            
+                            let _,count,score = alpha_beta table !alpha' !beta' (depth-1) (1-joueur) in
+                            table.(i).(j) <- false;
+                            table.(l).(m) <- false;
+                            compteur := !compteur + count; (*cmpt*)
+                            if score < !current_score then 
+                              begin
+                              meilleur_score := score;
+                              meilleur_coup := Some (i,j,tab_direction.(k));
+                              (*Printf.printf "nouveau meilleur coup pour le joueur 1 : %d %d %d score : %d\n" i j tab_direction.(k) score;*)
+                              current_score := score;
+                              if !current_score < !alpha' then 
+                                begin
+                                
+                                raise (Alpha_cutoff (Some(i,j,tab_direction.(k)),!compteur,!current_score))
+                                
+                              end;
+                            end;
+                            beta' := min !beta' !current_score;
+                          end;
+                          table.(i).(j) <- false;
+                          table.(l).(m) <- false;
+                        end
+                      done;
+                    done;
+                  done;
+                  if !playable = 0 then
+                    None,!compteur, 1
+                  else
+                    !meilleur_coup,!compteur,!meilleur_score 
+                    |_ -> failwith "erreur dans le joueur"
+                  with
+                  | Beta_cutoff (x,y,z) -> x,y,z
+                  | Alpha_cutoff (x,y,z) -> x,y,z 
+                  
+                in
+                
+                alpha_beta table min_int max_int depth 0
+             (*on veut premier joueur gagnant pour Cram*)
               ;;             
 
 
@@ -180,7 +252,7 @@ let random_strat table =
 !i,!j,tab_direction.(!k)
 ;;
 
-
+(*
 let play_and_print_alpha_beta_vs_random table =
   while not (Projet_Cram.perdu table) do  
     (*
@@ -213,3 +285,4 @@ let play_and_print_alpha_beta_vs_random table =
         end
       done
     ;;
+    *)

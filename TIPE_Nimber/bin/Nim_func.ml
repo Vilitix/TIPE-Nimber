@@ -1,3 +1,4 @@
+(*Nim_func.ml*)
 module SS = Set.Make(Int);;
 (*     SS.empty: O(1)
     SS.add: O(log n)
@@ -8,10 +9,10 @@ module SS = Set.Make(Int);;
     SS.diff: O(n log n)
     SS.fold: O(n)
     SS.iter: O(n)
-    https://github.com/ocaml/ocaml/blob/trunk/stdlib/set.m
+    Structure d'Ensembles implémentés avec des AVL
  *)
 
-(*FONCTIONS AUXILIAIRE *)
+(*FONCTIONS AUXILIAIRES *)
 
   (*pour calculer le minimum exclu d'un ensemble O(nlog(n))*)
 let mex x =

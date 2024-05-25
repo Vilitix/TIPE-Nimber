@@ -236,16 +236,14 @@ let actualiser_classes table =
               let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
               uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
               let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
-              
+              (*
               Printf.printf "%d, %d ,%d, %d premier cas to_add \n" xmin_i xmax_i ymin_i ymax_i;
               Printf.printf "%d, %d ,%d, %d premier cas \n" xmin xmax ymin ymax;
               Printf.printf "%d, %d ,%d, %d premier cas' \n" (min xmin_i xmin) (max xmax xmax_i) (min ymin ymin_i) (max (max ymax (j+2)) ymax_i);
-              Printf.printf "classe finale %d \n" classe_finale;
+              Printf.printf "classe finale %d \n" classe_finale; *)
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
-              let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale)  in
-              Printf.printf "i = %d xmax : %d, xmin : %d, ymax : %d, ymin : %d \n" i xmax xmin ymax ymin; (*+2 car on étudie déjà j+1*)
-
+              
           | _, y when y = p - 1 ->
             if not(table.(i + 1).(j)) then
               let classe_to_add = Unionfind.find !uf (mat_to_tab (i + 2) (j + 1) (p + 2)) in
@@ -253,8 +251,6 @@ let actualiser_classes table =
               uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 2) (j + 1) (p + 2));
               let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
               let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
-              Printf.printf "%d, %d ,%d, %d deux cas \n" xmin xmax ymin ymax;
-              Printf.printf "classe finale %d \n" classe_finale;
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
                (*+2 car on étudie déjà i+1*)
@@ -267,8 +263,6 @@ let actualiser_classes table =
                 
                 let classe_to_add1 = Unionfind.find !uf (mat_to_tab (i + 2) (j + 1) (p + 2)) in
               let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add1) in
-              Printf.printf "%d, %d ,%d, %d 3 cas \n" xmin xmax ymin ymax;
-              Printf.printf "classe finale %d \n" classe_finale;
                 uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 2) (j + 1) (p + 2));
                 tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale)  ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
                 tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add1) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
@@ -278,8 +272,6 @@ let actualiser_classes table =
 
                 let classe_to_add2 = Unionfind.find !uf (mat_to_tab (i + 1) (j + 2) (p + 2)) in
               let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add2) in
-              Printf.printf "%d, %d ,%d, %d 4 cas \n" xmin xmax ymin ymax;
-              Printf.printf "classe finale %d \n" classe_finale;
                 uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
                 tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
                 tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add2) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
@@ -290,18 +282,9 @@ let actualiser_classes table =
     done;
   done;
   uf,!tab_c
-
-
-let print_xmax tab_c = (*pour tests d'erreurs*)
-  for i = 0 to 50 do 
-    
-    let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get tab_c i in
-    Printf.printf "i = %d xmax : %d, xmin : %d, ymax : %d, ymin : %d \n" i xmax xmin ymax ymin
-  done;
-;;
     
 
-(*O(n*p*?) si séparation sinon O(?)*)
+(*O(n*p*(complexité union)) si séparation sinon O(complexité union)*)
 let actualiser_union_find table uf i j direction  =
   let _,p = taille table in 
   if (is_in_board table i j direction) then 
@@ -310,9 +293,8 @@ let actualiser_union_find table uf i j direction  =
     let tab_voisins = init_tab_case_adjacentes i j k l in
     let tab_voisins_classe = tab_voisins_to_classe tab_voisins uf table in
     if check_chemin tab_voisins_classe uf then
-      (print_uf uf table;
+      (
       let uf, new_tab_c = actualiser_classes table in 
-      print_uf uf table;
       uf, Some new_tab_c)
     else uf, None
   else failwith "coup incorrect"
@@ -396,50 +378,29 @@ let perdu table =
   done;
   !res
 
-  (*
-let iteration parameter n p:((int*int*int) list) =
-  let l = ref []
-  match parameter with 
-  |0-> 
-    for j = n-1 to 0 do 
-      for k = 0 to 1 do 
-        for i = p-1 downto 0 do 
-          l:= ::!l
-
-*)
-(*note pour plus tard lorsque l'on separe on refait bien tout l'union find pcq sinon lorsqu'on joue l'union de la classe de la nouvelle case 
-   qui est dans la même classe que toutes les autres met tout dans la même classe
-   besoin d'actualiser les coordonnée dans ce cas pour séparer*)
-
-  (*ajouter avec unir autour des classes d equi et si c est la classe d equi des truck posés  alors actualise *)
 
 
-(*let reso_naive table = 
-  let n,p = taille table in
-  let uf = init_uf table in
-  let tab_direction = [|-1;1;-2;2|] in
-  (*joueur 0 est premier joueur*)
-  let rec reso_naive_rec table uf i j direction joueur = 
-    if (perdu table) then joueur
-    else 
-      for i = 0 to 3 do 
-        if (is_playable table i j tab_direction.(i)) then 
-            reso_naive_rec table (play uf table i j tab_direction.(i)) i j tab_direction.(i) (1-joueur)
-      done;
-*)
 
-
-let iter table (i,j,k) =
+let iter table (i,j,k) = 
+  (*préfère les coup verticaux car ils sont à prioriser dans une table ou ligne < colonne ce qui est le cas ici si 
+  ligne != colonne (fragment narrowing heuristique efficace par l'étude de JOS W. H. M. UITERWIJK)*)
   let n, p = taille table in
+  if n*p = 1 then -1,-1,-1
+  else
   match (i, j, k) with
-  | 0, y, (- 2) when y = p-2-> (n - 1), 0, -1 (* fin horizontal *)
-  | 1, y, -1 when y = p-1-> -1, -1, -1 (* fin vertical, fin tout court *)
+  | 1, y, (- 1) when y = p-1-> (n - 1), 0, -2 (* fin vertical *)
+  |0, y, (-1) when y = p-1 -> (n-1), 0, -2 (* fin vertical pour les tableau 1*j *)
+  | 0, y, -2 when (y = p-2) || ((y=p-3) && (n/2 = (p-2) ))-> -1, -1, -1 (* fin horizontale, fin tout court *)
+  (*le ou || est relatif à l'autre itération astucieuse iter_heur qui dépend de iter*)
   | x, y, -2 when y = p-2-> (x - 1), 0, -2 (* fin d'une ligne en horizontal *)
   | x, y, -1 when y = (p-1)-> (x - 1), 0, -1
   | x, y, -2 -> x, (y + 1), -2
   | x, y, -1 -> x, (y + 1), -1
   |_ -> failwith "probleme d'itération"
 ;;
+
+
+
 let nimber_exact_naif table = 
   let n,p = taille table in
   let tab_direction = [|-1;1;-2;2|] in
