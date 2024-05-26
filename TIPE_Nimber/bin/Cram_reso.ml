@@ -1,18 +1,19 @@
 module Unionfind = Struct_pers.Make (Struct_pers.New_Arr);;
-let cap = 50;;
+let cap = 50;; (*le nimber est généralement très inférieur à 50 et une limite est nécessaire pour l'algorithme principal*)
 
 let mat_hash = Array.init 19 (fun i -> Array.init 19 (fun j -> Zobrist.get_hash_table (i,j) ));;
+(*on génère au préalable nos tables pre-enregistrées (pour ne pas avoir des valeurs différentes de hachage à
+   chaque exécution) pour calculer le hachage de Zobrist *)
 
 
 
 let rec resultat_couple table nimber uf (hash:int) = 
   let n,p = Projet_Cram.taille table in
-  assert (n<=p); (*pour eviter les symétries*)
+  assert (n<=p); (*pour eviter les symétries on se ramène toujours à n <= p même si la table est séparée*)
   let res = Hashtbl.find_opt Zobrist.hash_table (n,p,hash) in
 
   if res != None then begin(((Option.get res)) != nimber )end
   else
-  
   
   begin
     let playable = ref false in
@@ -35,11 +36,15 @@ let rec resultat_couple table nimber uf (hash:int) =
           match new_tab_c with
           |_ when !res = true -> () (*éviter des appels récursifs inutiles*)
           |None -> (if not(resultat_couple table nimber new_uf new_hash ) then res:=true );
+          (*une option perdante rend le résultat gagnant*)
           |Some tab_c -> 
             begin
+              (*tab_c est un tableau persistant appartenant à la structure de l'union find qui est 
+                 renvoyé seulement si une séparation est detecté *)
               let tab_post_sep = Projet_Cram.tab_post_sep table new_uf tab_c in
+              (*listes des tableaux de composantes indépendantes du jeu*)
               match tab_post_sep with 
-              |[] -> failwith "appel impossible à la fonction\n" 
+              |[] -> failwith "la fonction tab_post_sep est appelé sur un état séparable\n" 
               |t::q ->
                 begin
                   let new_nimber = ref nimber in
@@ -47,22 +52,23 @@ let rec resultat_couple table nimber uf (hash:int) =
                   interdépendance*)
                   let calcul_nimber_final table_fun = 
                     let i = ref 0 in
+                    let nfun,pfun = Projet_Cram.taille table_fun in
                     let hash_intern = Zobrist.init_hash table_fun in
-                    let uf_intern = Projet_Cram.init_uf table_fun in
-                    (*let nfun,pfun = Projet_Cram.taille table_fun in
-                    if not(Hashtbl.mem Zobrist.hash_table (nfun,pfun,hash_intern))then *)
+                    if not(Hashtbl.mem Zobrist.hash_table (n,p,hash))then 
                       begin
-                    while ((resultat_couple table_fun !i uf_intern hash_intern ) && (!i<= cap) ) do 
-                      i := !i+1
-                    done;
-                    if !i = cap then failwith "le nimber est supérieur au max précisé\n"
-                    else !i
-                    end
-                    (*else (Hashtbl.find Zobrist.hash_table (nfun,pfun,hash_intern)) *)
-                in
-                List.iter (fun sous_table -> new_nimber := !new_nimber lxor (calcul_nimber_final sous_table)) q; 
-                if not((resultat_couple t !new_nimber (Projet_Cram.init_uf t) (Zobrist.init_hash t))) then res:=true 
-                end (*si une option perdante alors l'étape en cours est gagnante*)
+                      let uf_intern = Projet_Cram.init_uf table_fun in
+                      
+                      while ((resultat_couple table_fun !i uf_intern hash_intern ) && (!i<= cap) ) do 
+                        i := !i+1
+                      done;
+                      if !i = cap then failwith "le nimber est supérieur au max précisé\n"
+                      else !i
+                  end
+                else (Hashtbl.find Zobrist.hash_table (nfun,pfun,hash_intern)) 
+              in
+              List.iter (fun sous_table -> new_nimber := !new_nimber lxor (calcul_nimber_final sous_table)) q; 
+              if not((resultat_couple t !new_nimber (Projet_Cram.init_uf t) (Zobrist.init_hash t))) then res:=true 
+              end (*si une option perdante alors l'étape en cours est gagnante*)
               
             end;
           end;
@@ -80,18 +86,21 @@ let rec resultat_couple table nimber uf (hash:int) =
       done;
       
       if ((nimber = 0) && (not(!playable))) then begin  Hashtbl.add Zobrist.hash_table (n,p,hash) 0;false  end
+        (*c'est le cas de base de notre algorithme *)
     else
       begin
         
-        if !res then begin true end
+        if !res then true
         else
         begin
           for i = 0 to nimber -1 do
             if not(resultat_couple table i uf hash ) then res:= true
+              (*appel sur les options, une option perdante suffit*)
             done;
           if !res = false then  
             begin 
               Hashtbl.add Zobrist.hash_table (n,p,hash) (nimber);
+              (*c'est une propriété*)
               !res 
             end
           else true

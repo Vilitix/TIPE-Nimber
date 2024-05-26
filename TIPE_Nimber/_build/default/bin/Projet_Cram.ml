@@ -95,7 +95,7 @@ let init_uf tab =
   let n,p = taille tab in
   let uf = ref (Unionfind.create ((n+2)*(p+2))) in
 (*initialisation de la classe des côtés*)
-  (*réel tableau de  i = 1 à n et j de 1 à p*)
+  (*réel tableau de  i = 1 à n et j de 1 à p car on créer une classe d'équivalence des bords*)
   for i = 0 to n+1 do (*car de taille n+2*) 
     uf := Unionfind.union !uf (mat_to_tab i 0 (p+2)) 0;
     uf := Unionfind.union !uf (mat_to_tab i (p+1) (p+2)) 0;
@@ -104,6 +104,9 @@ let init_uf tab =
     uf := Unionfind.union !uf (mat_to_tab 0 j (p+2)) 0;
     uf:= Unionfind.union !uf (mat_to_tab (n+1) j (p+2)) 0;
   done;
+  (*on initialise maintenant les classes à partir des coups déjà joué
+     cela ne coute "rien" de plus en complexité, car cette fonction est appelé avec init_hash nécessairement (en O(n*p)
+     lui aussi)*)
   for i = 0 to n-1 do 
     for j = 0 to p-1 do 
       if (tab.(i).(j)) then 
@@ -111,7 +114,9 @@ let init_uf tab =
           (
           if ((i = 0) || (i=(n-1)) || (j=0) || (j=(p-1)) ) then 
             let classe_0 = Unionfind.find !uf 0 in
+          (*la classe 0 peut changer après un union*)
             uf := Unionfind.union !uf (mat_to_tab (i+1) (j+1) (p+2)) classe_0 );
+            (*il faut bien signaler si une classe est reliée au bord pour check chemin*)
         let k1,l1 = deuxieme_cases_vise i j (1) in
         let k2,l2 = deuxieme_cases_vise i j (-2) in
         (if (k1<n)&&(l1<p)&&(tab.(k1).(l1)) then 
@@ -127,6 +132,7 @@ let init_uf tab =
 
 (*O(1)*)
 let init_tab_case_adjacentes i j k l = (*renvoie les 10 cases adjacentes aux points i j et k l*)
+ (*fonction appelé sur des cases de coup jouable*)
   let tab_voisins = Array.make 10 (-2,-2) in (*-2 valeur impossible car le coup est jouable*)
     tab_voisins.(0) <- (min i k),((min j l)-1);
     tab_voisins.(1) <- ((min i k)-1),((min j l)-1);
@@ -158,7 +164,8 @@ let init_tab_case_adjacentes i j k l = (*renvoie les 10 cases adjacentes aux poi
       tab_voisins
       
 
-(*O(?)*)
+(*O(complexité du find + complexité du union) car ces opération sont fait un nombre borné de fois 
+   car la taille de tab voisin est 10*)
 
 let tab_voisins_to_classe tab_voisin uf table =
   (*tab_res.(i) = true si la case correspondante est remplie ou un bord*)
@@ -168,10 +175,12 @@ let tab_voisins_to_classe tab_voisin uf table =
   let classe_0 = ref (Unionfind.find !uf 0) in 
   let tab_res = Array.make k (-1) in
   let l, j' = tab_voisin.(0) in 
-  let j = j'+1 in (*coordonnée d'un point parmi les 2 cases visées*)
+  let j = j'+1 in 
+  (*coordonnée d'une case parmi les 2 cases visées dont on a les voisins*)
   for i = 0 to k-1 do 
     let x,y = tab_voisin.(i) in
     if (x = -1) || (x = n) || (y = -1) || (y = p) then 
+      (*appartient aux bords*)
       begin
         uf:= Unionfind.union !uf (mat_to_tab (l+1) (j+1) (p+2)) !classe_0;
         classe_0:= (Unionfind.find !uf 0);
@@ -192,7 +201,8 @@ let tab_voisins_to_classe tab_voisin uf table =
 
 (*O(1) toujours le même nombre d'action tab_voisin est de taille 10*)
 let check_chemin tab uf :bool =  
-  (*trouve s'il y a un chemin entre deux points i j de i à j et de j à i ayant au moins une case true  *)
+  (*trouve s'il y a un chemin entre deux points i j de i à j et de j à i ayant au moins une case true
+     avec i les points i et j des cases vides  *)
   (*c'est la conditon pour lancer le union find (signifie que le plateau est séparable)*)
   (*en pratique k = 10 constant*)
   let k = Array.length tab in 
@@ -205,6 +215,7 @@ let check_chemin tab uf :bool =
         begin
           for m = j+1 to i-1 do 
             let l = ref ((i + 1) mod k) in (*chemin extérieur*)
+            (*tout est modulo k, on considère le tableau des voisins comme circulaire*)
             while (!l != j) do 
 
               if tab.(m) = tab.(!l) then 
@@ -232,7 +243,7 @@ let init_classe_uf table =
   Struct_pers.New_Arr.init ((n+2)*(p+2)) f
   
 
-(*O(n*p*?) ne s'execute que s'il y a séparation*)
+(*O(n*p*(complexité union + complexité find)) ne s'execute que s'il y a séparation*)
 let actualiser_classes table =
   let n, p = taille table in
   let uf = init_uf table in
@@ -245,7 +256,7 @@ let actualiser_classes table =
       if not table.(i).(j) then
         begin
           match i, j with
-          | x, y when x = n - 1 && y = p - 1 -> ()
+          | x, y when x = n - 1 && y = p - 1 -> () (*dernière case*)
           | x, _ when x = n - 1 ->
             if not(table.(i).(j + 1)) then
               let classe_to_add = Unionfind.find !uf (mat_to_tab (i + 1) (j + 2) (p + 2)) in
@@ -255,12 +266,13 @@ let actualiser_classes table =
               let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
-              
+              (*les champs après classe finale représente les tailles de la classe d'équivalence*)
+              (*on change les deux classes car l'union est susceptible de changer classe_to_add comme classe finale*)
+
           | _, y when y = p - 1 ->
             if not(table.(i + 1).(j)) then
               let classe_to_add = Unionfind.find !uf (mat_to_tab (i + 2) (j + 1) (p + 2)) in
               let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add) in
-              
               uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 2) (j + 1) (p + 2));
               let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
               let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
@@ -286,7 +298,8 @@ let actualiser_classes table =
 
                 let classe_to_add2 = Unionfind.find !uf (mat_to_tab (i + 1) (j + 2) (p + 2)) in
                 let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
-               
+               (*rentrer dans les dexu if est possible les classes sont susceptibles de changer ce qui justifie les deux lignes 
+                  précédentes*)
                 let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
               let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add2) in
                 uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
@@ -297,6 +310,7 @@ let actualiser_classes table =
               
         end
       else uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) !classe_0 ; classe_0:= Unionfind.find !uf 0
+      (*on met dans la classe des bords chaque cases remplie*)
     done;
   done;
   uf,!tab_c
@@ -319,9 +333,10 @@ let actualiser_union_find table uf i j direction  =
 let tab_post_sep table uf tab_c = 
   let n,p = taille table in
   let liste_res = ref [] in
-  (*liste de taille au max 4 car un coup peut séparer le tableau en 4 parties au maximum*)
+  (*liste de taille au maximum 4 car un coup peut séparer le tableau en 4 parties au maximum*)
   let classe_0 = Unionfind.find !uf 0 in
-  let tab_verif_classe = Array.make ((n+2)*(p+2)) true in (*si a false tableau deja créée*)
+  let tab_verif_classe = Array.make ((n+2)*(p+2)) true in 
+  (*si une case est à false la classe a déjà été traité*)
   for i = 0 to (((n+2)*(p+2))-1) do 
     let classe_en_cours = Unionfind.find !uf i in
     if ((tab_verif_classe.(classe_en_cours)) && (classe_en_cours != classe_0)  )  then (
@@ -332,6 +347,7 @@ let tab_post_sep table uf tab_c =
         let new_y = max (xmax-xmin+1) (ymax-ymin+1) in
         let new_tab = Array.make_matrix new_x new_y true in
         liste_res:= (new_tab,classe_en_cours,xmin,xmax,ymin,ymax) :: !liste_res;
+        (*list_res est un découpage des nouveaux tableaux *)
              
     );
     let k,l = tab_to_mat i (p+2) in
@@ -339,11 +355,13 @@ let tab_post_sep table uf tab_c =
     if ((k!= 0) && (l!=0) && (k!=n+1) && (l!= p+1) ) then 
 
       begin
-      (*O(alpha(n)) car liste de taille <= 4*)
+      (*O(complexité du find) car liste de taille <= 4*)
     let rec parcourir_liste liste = 
       match liste with 
       |[] -> () (*pas d'erreur si grosse partie recouverte de jetons ils n'ont pas de tableau *)
       |(tab,j,xmin_l,xmax_l,ymin_l,ymax_l)::q -> 
+        (*association des valeurs des nouveaux tableaux, true si la case est à true ou déjà dans 
+           un autre tableau false sinon *)
         begin
           if ((k-xmin_l >=0) && (0<=(xmax_l-k)) && ((l-ymin_l)>=0) && ((ymax_l-l)>=0)) then 
             begin
@@ -396,8 +414,8 @@ let perdu table =
 
 
 let iter table (i,j,k) = 
-  (*préfère les coup verticaux car ils sont à prioriser dans une table ou ligne < colonne ce qui est le cas ici si 
-  ligne != colonne (fragment narrowing heuristique efficace par l'étude de JOS W. H. M. UITERWIJK)*)
+  (*préfère les coups verticaux car ils sont à prioriser dans une table ou ligne < colonne ce qui est le cas ici si 
+  ligne != colonne (pour séparer la table) *)
   let n, p = taille table in
   if n*p = 1 then -1,-1,-1
   else
@@ -415,7 +433,8 @@ let iter table (i,j,k) =
 
 
 
-let nimber_exact_naif table = 
+let nimber_exact_naif table =  
+  (*simple backtracking pour vérifier l'autre algorithme et bien comprendre les nimbers*)
   let n,p = taille table in
   let tab_direction = [|-1;1;-2;2|] in
   let rec calcul_nim table = 

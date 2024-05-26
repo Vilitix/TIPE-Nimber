@@ -2,72 +2,34 @@
 exception Beta_cutoff of (((int * int * int)option)*int*int);;
 exception Alpha_cutoff of (((int * int * int)option)*int*int);;
 
-let get_under_vertical_pos table i j =
-  let n,_ = Projet_Cram.taille table in
-  match i with 
-  |l when ((l+2) < n) && (Projet_Cram.is_playable table (l+2) j (-2)) -> Some (l+2,j,-2)
-  |l when ((l+1) < n) && (Projet_Cram.is_playable table (l+1) j (-1)) -> Some(l+1,j,-1)
-  |_ -> None
-;;
 
-let get_up_vertical_pos table i j =
-  match i with
-  |l when ((l-2) >= 0) && (Projet_Cram.is_playable table (l-2) j (-2)) -> Some (l-2,j,-2)
-  |l when ((l-1) >= 0) && (Projet_Cram.is_playable table (l-1) j (-1)) -> Some(l-1,j,-1)
-  |_ -> None
-;;
 
-let get_right_horizontal_pos table i j=
-  let _,p = Projet_Cram.taille table in
-  match j with
-  |c when ((c+2) < p) && (Projet_Cram.is_playable table i (c+2) (-1)) -> Some (i,c+2,-1)
-  |c when ((c+1) < p) && (Projet_Cram.is_playable table i (c+1) (-2)) -> Some(i,c+1,-2)
-  |_ -> None
-
-(*
-let iter_heur table (i,j,k)  = (*seule ligne verticale importante car dans tous les cas il y a aura séparation et 
-   et n<= p (plus rapide à séparer) (même après séparation)*)
-  let n,_ = Projet_Cram.taille table in
-  let l,_ = Projet_Cram.deuxieme_cases_vise i j k in
-  let coup = ref (get_up_vertical_pos table (min l i) j) in 
-  let ligne = ref (i+1) in
-  while (!coup = None)&&(!ligne < 1)&&(!ligne >= (n-1)) do 
-    if i < (n/2) then 
-      begin
-      coup := get_up_vertical_pos table !ligne j;
-      ligne := !ligne + 1;
-      end
-    else
-      begin
-      coup := get_under_vertical_pos table !ligne j;
-      ligne := !ligne - 1;
-      end
-  done;
-  if !coup = None then Projet_Cram.iter table (i,j,k) (*garde fou car la table est censé être séparé avant*)
-  else
-    match !coup with
-    |Some (a,b,c) -> a,b,c
-    |None -> failwith "erreur dans iter_heur"
-;;
-*)
 
 let iter_heur table (i,j,k) =
   let n,p = Projet_Cram.taille table in 
+  (*le coup initiale est au milieu vers le haut conseillé par une heuristique présente dans 
+     JOS W. H. M. UITERWIJK : Solving Cram Using Combinatorial Game Theory
+     puis les coups sur la colonne centrale verticaux puis horizontaux (choix personnel)
+     enfin on parcourt tous les autres coup avec la fonction iter qui commence par tous les coup verticaux*)
   if n*p = 1 then (-1,-1,-1)
   else
   match i,j,k with 
   |i,j,k when  (j= (p/2)) && (i <= (n/2)) && (k=(-1)) -> if (i>=2) then (i-1),j,(-1) else (if (n/2 + 1)< n then (n/2 +1 ,p/2,-1) else (n/2,p/2,-2))
+  (*au début on parcourt les coups verticaux vers le haut sur la partie supérieure de la colonne centrale*)
   |i,j,k when  (j= (p/2)) && (i > (n/2)) && (k=(-1)) ->if ((i + 2) <= n) then (i + 1),j,(-1) else (n/2,p/2,-2)
+  (*puis vers le haut sur la partie inférieure de la colonne centrale*)
   |i,j,k when (j=p/2) && (k = -2) && (i<= (n/2)) -> if (i>0) then (i-1,j,-2) else (if (n/2 +1)<n then (n/2 +1,p/2,-2) else ((n-1),0,-1))
+  (*puis vers la droite sur la partie supérieure de la colonne centrale *)
   |i,j,k when (j=p/2) && (k = -2) && (i> (n/2)) -> if ((i + 1) < n) then (i + 1),j,(-2) else ((n-1),0,-1)
+  (*puis vers la droite sur la partie inférieure de la colonne centrale *)
   |i, j, k when (j != (p/2)) -> 
+    (*autre coups sauf ceux sur la colonne centrale*)
     let newi,newj,newk = Projet_Cram.iter table (i,j,k) in 
     if (newj = (p/2)) then (Projet_Cram.iter table (newi,newj,newk))
     else newi,newj,newk
-  (*fonctionne pour k = -1 ou -2 car dans tous les cas i est la plus basse ligne du précédent coup*) 
-  |_ -> failwith "erreur d itération"
+  |_ -> failwith "erreur d'itération"
   (* le 0 0 -2 est bien nouveau coup car p/2 > 0 car j>1 (cas 1 1 trivial)*)
-let alpha_beta_coup table i j k depth = 
+let alpha_beta_coup table i j k depth = (*problème coup déjà fait*)
   
   let rec alpha_beta table alpha beta depth joueur = 
     try

@@ -2,9 +2,13 @@
 (*Zobrist.ml*)
 
 
-let hash_table = Hashtbl.create 500000;; 
+let hash_table = Hashtbl.create 1300000;; 
 
 let extract_key line =
+  (*format de stockage :
+     ligne,colonne,hash
+     nimber
+    *)
   match String.split_on_char ';' line with
   | [ij; hash] ->
     let i, j = match String.split_on_char ',' ij with
@@ -18,8 +22,8 @@ let restore () =
   let channel = open_in "/home/arthur/Desktop/TIPE/data_Cram/Hash.txt" in
   try
     while true do
-      let raw_key =  (input_line channel) in
-      let i,j,hash = extract_key raw_key in
+      let entire_key =  (input_line channel) in
+      let i,j,hash = extract_key entire_key in
       let key = (i,j,(int_of_string hash)) in
       let value = (int_of_string (input_line channel)) in
       Hashtbl.add hash_table key value;
@@ -27,7 +31,8 @@ let restore () =
     close_in channel;
     Hashtbl.copy hash_table
     with
-      End_of_file -> close_in channel;Hashtbl.copy hash_table
+      End_of_file -> close_in channel;Hashtbl.copy hash_table 
+      (*on renvoi une copie pour ne pas ajouter de doublons ensuite*)
     ;;
     ;;
 
@@ -43,7 +48,8 @@ let save copy = (*copy sert à ne pas reécrire des doublons dans le fichier *)
 
 
 
-(*chaine de bits générés aléatoirement dans un tableau 2D nb de case*2 si case 0 rien sinon pièce*)
+(*chaine de bits générés aléatoirement dans un tableau 2D nb de case*2 si case 0 rien sinon pièce
+   méthode relative au hachage de Zobrist*)
 let generate_hash_table (i,j) =
   let tab_hash = Array.make_matrix (i*j) 2 0 in 
   for i = 0 to (i*j)-1 do
@@ -53,6 +59,7 @@ let generate_hash_table (i,j) =
   tab_hash;;
 
 let store_hash_table (i,j) tab =
+  (*organisation des fichier ligne_colonne arbitraire*)
   let file = "/home/arthur/Desktop/TIPE/data_Cram/" ^ string_of_int i ^ "_" ^ string_of_int j ^ ".txt" in
   let channel = open_out file in
   for i = 0 to (i*j)-1 do
@@ -78,7 +85,8 @@ let get_hash_table (i,j) =
       tab
     end
     
-  else Array.make_matrix ((i*j)+1) 2 0;; (*cas pour initialiser la matrice de hash_table dans Cram_reso*)
+  else Array.make_matrix ((i*j)+1) 2 0 
+  (*cas seulement utile pour initialiser la matrice de hash_table dans Cram_reso*)
 ;;
 
 

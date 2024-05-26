@@ -1,7 +1,7 @@
 module New_Arr :
   sig
     type 'a t = 'a data ref
-    and 'a data = Arr of 'a array | N of int * 'a * 'a t
+    and 'a data = Arr of 'a array | N of int * 'a * 'a t | Invalid
     val init : int -> (int -> 'a) -> 'a data ref
     val reroot : 'a t -> unit
     val get : 'a t -> int -> 'a

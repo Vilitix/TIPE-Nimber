@@ -1,15 +1,20 @@
+(*Struct.pers.ml*)
+
+(*Tableau persistant*)
 
 module New_Arr = struct
-
 type 'a t = 'a data ref
 and 'a data =
 |Arr of 'a array
 |N of int * 'a * 'a t
+|Invalid
 
 
 let init n f = ref (Arr (Array.init n f))
 
+
 let rec reroot t = 
+  (*sorte de compression des chemins du union find mais pour un tableau*)
   match !t with
   |Arr _ -> ()
   |N(i, v, t1) -> 
@@ -17,12 +22,14 @@ let rec reroot t =
     begin 
       match !t1 with
       |Arr a as n ->
-        let v1 = a.(i) in
         a.(i) <- v;
         t := n;
-        t1 := N(i, v1, t)
-      |N(_) -> assert false
+        t1 := Invalid
+      |N(_) |Invalid -> assert false (*après reroot t1 est un Arr*)
     end
+    |Invalid -> assert false
+
+
 let get t i = 
   match !t with
   |Arr a -> a.(i)
@@ -32,7 +39,10 @@ let get t i =
       match !t with
       |Arr a -> a.(i)
       |N(_) -> assert false
+      |Invalid -> assert false
     end
+  |Invalid -> assert false
+
 
 let set t i j = 
   match !t with
@@ -45,7 +55,7 @@ let set t i j =
       res
     end
   |N(_) -> assert false
-
+  |Invalid -> assert false
   end
 
 
@@ -56,7 +66,9 @@ val get : 'a t -> int -> 'a
 val set : 'a t -> int -> 'a -> 'a t
 end
 
+(*fin tableau persistant *)
 
+(*Union find*)
 module type PersistentUnionFind = sig
   type t
   val create : int -> t
@@ -64,16 +76,22 @@ module type PersistentUnionFind = sig
   val union : t -> int -> int -> t
 end
 
+
+ (*foncteur, notion dont on ne s'intéresse pas trop et peut être évitable ici même si plus propre,
+  seulement une reprise du document :
+  Sylvain Conchon, Jean Christophe Filiâtre : A Persistent Union-Find*)
 module Make(A : PersistentArray) : PersistentUnionFind = struct
   type t = {
     rang: int A.t;
     mutable parent: int A.t
   }
 
+
   let create n = {
     rang = A.init n (fun _ -> 0);
     parent = A.init n (fun i -> i)
   }
+
 
   let rec find_aux f i =
     let fi = A.get f i in
@@ -83,12 +101,15 @@ module Make(A : PersistentArray) : PersistentUnionFind = struct
       let f, r = find_aux f fi in
       let f = A.set f i r in
       f, r
+      (*compression des chemins*)
+
 
   let find h x =
     let f, cx = find_aux h.parent x in
     h.parent <- f;
     cx
 
+    
   let union h x y =
     let cx = find h x in
     let cy = find h y in
@@ -103,5 +124,6 @@ module Make(A : PersistentArray) : PersistentUnionFind = struct
         else
           { rang = A.set h.rang cx (rx + 1); parent = A.set h.parent cy cx }
       end 
+      (*union par rang*)
     else h
 end
