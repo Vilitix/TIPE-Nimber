@@ -56,8 +56,8 @@ let iter_heur table (i,j,k) =
   if n*p = 1 then (-1,-1,-1)
   else
   match i,j,k with 
-  |i,j,k when  (j= (p/2)) && (i <= (n/2)) && (k=(-1)) ->  if i>2 then (i-2),j,(-1) else (if (n/2 + 2)< n then (n/2 +2 ,p/2,-1) else (n/2,p/2,-2))
-  |i,j,k when  (j= (p/2)) && (i > (n/2)) && (k=(-1)) ->if ((i + 2) < n) then (i + 2),j,(-1) else (n/2,p/2,-2)
+  |i,j,k when  (j= (p/2)) && (i <= (n/2)) && (k=(-1)) -> if (i>=2) then (i-1),j,(-1) else (if (n/2 + 1)< n then (n/2 +1 ,p/2,-1) else (n/2,p/2,-2))
+  |i,j,k when  (j= (p/2)) && (i > (n/2)) && (k=(-1)) ->if ((i + 2) <= n) then (i + 1),j,(-1) else (n/2,p/2,-2)
   |i,j,k when (j=p/2) && (k = -2) && (i<= (n/2)) -> if (i>0) then (i-1,j,-2) else (if (n/2 +1)<n then (n/2 +1,p/2,-2) else ((n-1),0,-1))
   |i,j,k when (j=p/2) && (k = -2) && (i> (n/2)) -> if ((i + 1) < n) then (i + 1),j,(-2) else ((n-1),0,-1)
   |i, j, k when (j != (p/2)) -> 

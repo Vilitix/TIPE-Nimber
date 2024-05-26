@@ -253,14 +253,8 @@ let actualiser_classes table =
               let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
               uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
               let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
-              (*
-              Printf.printf "%d, %d ,%d, %d premier cas to_add \n" xmin_i xmax_i ymin_i ymax_i;
-              Printf.printf "%d, %d ,%d, %d premier cas \n" xmin xmax ymin ymax;
-              Printf.printf "%d, %d ,%d, %d premier cas' \n" (min xmin_i xmin) (max xmax xmax_i) (min ymin ymin_i) (max (max ymax (j+2)) ymax_i);
-              Printf.printf "classe finale %d \n" classe_finale; *)
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
-              (if xmin_i = 2 then Printf.printf "hahaha1 x %d %d y %d %d\n" xmin xmax ymin ymax);
               
           | _, y when y = p - 1 ->
             if not(table.(i + 1).(j)) then
@@ -272,7 +266,6 @@ let actualiser_classes table =
               let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
-              (if xmin_i = 2 then Printf.printf "hahaha2 x %d %d y %d %d\n" xmin xmax ymin ymax);
                (*+2 car on étudie déjà i+1*)
 
           | _, _ ->
@@ -287,7 +280,6 @@ let actualiser_classes table =
               
                 tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale)  ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
                 tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add1)  ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
-                (if xmin_i = 2 then Printf.printf "hahaha3 x %d %d y %d  %d\n" xmin (max (max xmax (i+2)) xmax_i) ymin ymax);
                 );
 
               if not(table.(i).(j + 1)) then (
@@ -300,7 +292,7 @@ let actualiser_classes table =
                 uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
                 tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
                 tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add2) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
-                (if xmin_i = 2 then Printf.printf "hahaha4 x %d %d y %d %d\n" xmin xmax ymin ymax);
+
                 );
               
         end
@@ -319,8 +311,6 @@ let actualiser_union_find table uf i j direction  =
     let tab_voisins_classe = tab_voisins_to_classe tab_voisins new_uf table in
     if check_chemin tab_voisins_classe new_uf then
       (
-        Printf.printf "check chemin\n";
-        print_matrix table;
       let uf_post_actu, new_tab_c = actualiser_classes table in 
       uf_post_actu, Some new_tab_c)
     else new_uf, None
@@ -342,7 +332,6 @@ let tab_post_sep table uf tab_c =
         let new_y = max (xmax-xmin+1) (ymax-ymin+1) in
         let new_tab = Array.make_matrix new_x new_y true in
         liste_res:= (new_tab,classe_en_cours,xmin,xmax,ymin,ymax) :: !liste_res;
-        Printf.printf "en cours xmin %d %d ymin %d %d \n " xmin xmax ymin ymax;
              
     );
     let k,l = tab_to_mat i (p+2) in

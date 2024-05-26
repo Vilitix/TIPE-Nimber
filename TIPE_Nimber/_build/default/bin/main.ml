@@ -138,7 +138,8 @@ let measure_time f len tab =
   close_out channel;
 ;;
 *)
- 
+(*
+let copy =Zobrist.restore ();; 
 (*
 Printf.printf("%d\n") (Cram_reso.nimber_non_naif [|[|false;true;true;true|];[|true;true;false;false|];[|true;false;false;false|]|]);;
 Printf.printf("%d\n") (Projet_Cram.nimber_exact_naif [|[|false;true;true;true|];[|true;true;false;false|];[|true;false;false;false|]|]);;
@@ -174,12 +175,12 @@ let vrai_test_all_tab n m =
   in
   test_tab (n - 1) 0 (-2)
 ;;
+*)
 
 
 
 
-
-(*
+(**
   let test_iter table = 
     let n,p = Projet_Cram.taille table in 
     let i = ref (n/2) in
@@ -195,42 +196,35 @@ let vrai_test_all_tab n m =
       Projet_Cram.print_matrix table;
       table.(v).(l) <- false;
       table.(!i).(!j) <- false;
-        ));
+        )else Printf.printf "coup impossible i %d j %d k %d\n " !i !j !k);
       let newi,newj,newk = Cram_alpha_beta.iter_heur table (!i,!j,!k) in
         i := newi;
         j := newj;
         k := newk;
     done;;
-  let table = [|[|false;false;false;false;false|]|];;
-  test_iter table;;
-  Printf.printf "%d \n" (Projet_Cram.nimber_exact_moins_naif table);;
+
   
-for i = 1 to 5 do 
-  for j = i to 5 do 
-    vrai_test_all_tab i j;
-  done;
-done
-;;
+*)
 
 
 
-
+(*
   
 Zobrist.save copy;;
 *)
-let copy = Zobrist.restore ();;
 
-for i = 1 to 5 do 
-  for j = i to 5 do
-    vrai_test_all_tab i j;
-  done;
-done;;
+
+
+let save = Zobrist.restore ();;
+let table = [|[|false;false;false;false;false;false;false;false;false;false;false|];[|false;false;false;false;false;false;false;false;false;false;false|];[|false;false;false;false;false;false;false;false;false;false;false|];|];;
+
+Printf.printf "nimber %d\n" (Cram_reso.nimber_non_naif table);;
 (*
-let table = [|[|false;false;false;false;|];[|false;false;true;true|];[|true;true;false;false|]|];;
-Projet_Cram.print_uf (Projet_Cram.init_uf table) table;;
+Printf.printf "nimber %d\n" (Projet_Cram.nimber_exact_naif table);;
 *)
+
 (*
 let table = [|[|false;false;false;false;false;false|];[|false;false;false;false;false;false|];[|false;false;false;false;false;false|]|];;
 Printf.printf "nimber %d\n" (Cram_reso.nimber_non_naif table);;
 *)
-Zobrist.save copy;;
+Zobrist.save save;;
