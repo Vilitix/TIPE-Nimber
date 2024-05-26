@@ -14,7 +14,7 @@ val print_uf : Unionfind.t ref -> 'a array array -> unit
 val deuxieme_cases_vise : int -> int -> int -> int * int
 val is_in_board : 'a array array -> int -> int -> int -> bool
 val is_playable : bool array array -> int -> int -> int -> bool
-val init_uf : 'a array array -> Unionfind.t ref
+val init_uf : bool array array -> Unionfind.t ref
 val init_tab_case_adjacentes : int -> int -> int -> int -> (int * int) array
 val tab_voisins_to_classe :
   (int * int) array -> Unionfind.t ref -> bool array array -> int array
@@ -47,4 +47,3 @@ val play :
 val nimber_exact_naif : bool array array -> int
 val iter : 'a array array -> int * int * int -> int * int * int
 val perdu : bool array array -> bool
-val nimber_exact_moins_naif : bool array array -> int

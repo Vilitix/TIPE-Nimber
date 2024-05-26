@@ -154,7 +154,10 @@ let vrai_test_all_tab n m =
     if i = -1 then ()
     else
       begin
-        ignore (Cram_reso.nimber_non_naif tab);
+        match ((Projet_Cram.nimber_exact_naif tab) <> (Cram_reso.nimber_non_naif tab)) with
+            | true -> Projet_Cram.print_matrix tab;failwith "erreur"
+            |false -> ()
+            ;
         let newi, newj, newk = Projet_Cram.iter tab (i, j, k) in
         Printf.printf "i = %d j = %d k = %d, n %d, m %d\n \n" i j k n m;
         if Projet_Cram.is_playable tab i j k then
@@ -162,8 +165,9 @@ let vrai_test_all_tab n m =
             let t, l = Projet_Cram.deuxieme_cases_vise i j k in
             tab.(i).(j) <- true;
             tab.(t).(l) <- true;
-            ignore (Cram_reso.nimber_non_naif tab);
-            test_tab newi newj newk
+            match ((Projet_Cram.nimber_exact_naif tab) <> (Cram_reso.nimber_non_naif tab)) with
+            | true -> Projet_Cram.print_matrix tab;failwith "erreur"
+            |false -> test_tab newi newj newk
           end
         else
           test_tab newi newj newk
@@ -171,7 +175,7 @@ let vrai_test_all_tab n m =
   in
   test_tab (n - 1) 0 (-2)
 ;;
-
+*)
 
 
 
@@ -201,7 +205,6 @@ let vrai_test_all_tab n m =
   let table = [|[|false;false;false;false;false|]|];;
   test_iter table;;
   Printf.printf "%d \n" (Projet_Cram.nimber_exact_moins_naif table);;
-  *)
   
 for i = 1 to 5 do 
   for j = i to 5 do 
@@ -217,7 +220,15 @@ done
 Zobrist.save copy;;
 *)
 let copy = Zobrist.restore ();;
-let table = [|[|false;false;false|];[|false;false;false|]|];;
 
-Printf.printf "nimber table : %d" (Cram_reso.nimber_non_naif table);;
+
+
+let table = [|[|false;false;false;false;|];[|false;false;false;false|];[|true;true;true;true|];[|true;true;true;true|]|];;
+Printf.printf "nimber %d\n" (Cram_reso.nimber_non_naif table);;
+Printf.printf "nimber %d\n" (Projet_Cram.nimber_exact_naif table);;
+
+(*
+let table = [|[|false;false;false;false;false;false|];[|false;false;false;false;false;false|];[|false;false;false;false;false;false|]|];;
+Printf.printf "nimber %d\n" (Cram_reso.nimber_non_naif table);;
+*)
 Zobrist.save copy;;

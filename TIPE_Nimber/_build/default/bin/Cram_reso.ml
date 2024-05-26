@@ -33,11 +33,14 @@ let rec resultat_couple table nimber uf (hash:int) =
         let new_hash = hash lxor mat_hash.(n).(p).((!i*p) + !j ).(0) lxor mat_hash.(n).(p).((!i*p) + !j).(1)
         lxor mat_hash.(n).(p).(l*p + m).(0) lxor mat_hash.(n).(p).(l*p+m).(1) in
         playable := true;
+        Projet_Cram.print_matrix table;
+        Projet_Cram.print_uf uf table;
         let new_uf, new_tab_c = Projet_Cram.actualiser_union_find table uf !i !j !k in
+        Projet_Cram.print_uf new_uf table;
         begin
           match new_tab_c with
           |_ when !res = true -> Printf.printf "short\n";() (*éviter des appels récursifs inutiles*)
-          |None -> (if not(resultat_couple table nimber new_uf new_hash ) then begin Printf.printf "no sep option perdante\n";Projet_Cram.print_matrix table;res:=true end);
+          |None -> (if not(resultat_couple table nimber new_uf new_hash ) then begin Printf.printf "no sep option perdante nimber %d n %d p %d\n" nimber n p;Projet_Cram.print_matrix table;res:=true end);
           |Some tab_c -> 
             begin
               Printf.printf "appel 2coupe\n";
@@ -48,10 +51,12 @@ let rec resultat_couple table nimber uf (hash:int) =
               |t::q ->
                 begin
                   let new_nimber = ref nimber in
+                  Printf.printf "t : \n";
+                  Projet_Cram.print_matrix t;
                   (*appel au dernier algorithme fonction refaite pour problème d'
                   interdépendance*)
                   let calcul_nimber_final table_fun = 
-                    Printf.printf "appel calc final \n";
+                    Printf.printf "appel calc finale";
                     let i = ref 0 in
                     let hash_intern = Zobrist.init_hash table_fun in
                     let uf_intern = Projet_Cram.init_uf table_fun in
@@ -69,7 +74,7 @@ let rec resultat_couple table nimber uf (hash:int) =
                 List.iter (fun sous_table -> new_nimber := !new_nimber lxor (calcul_nimber_final sous_table)) q; 
                 Printf.printf "nouveau nimber %d\n" !new_nimber;
                 if not((resultat_couple t !new_nimber (Projet_Cram.init_uf t) (Zobrist.init_hash t))) then begin Printf.printf "true tot\n";res:=true end
-                end
+                end (*si une option perdante alors l'étape en cours est gagnante*)
               
             end;
           end;
@@ -86,14 +91,14 @@ let rec resultat_couple table nimber uf (hash:int) =
         )
       done;
       
-      if ((nimber = 0) && (not(!playable))) then begin Hashtbl.add Zobrist.hash_table (n,p,hash) 0;false  end
+      if ((nimber = 0) && (not(!playable))) then begin Printf.printf "peut pas jouer\n"; Hashtbl.add Zobrist.hash_table (n,p,hash) 0;false  end
     else
       begin
         
-        if !res then true
+        if !res then begin Printf.printf "true\n";true end
         else
         begin
-          
+          Projet_Cram.print_uf uf table;
           for i = 0 to nimber -1 do
             if not(resultat_couple table i uf hash ) then res:= true
             done;
@@ -242,6 +247,7 @@ let nimber_non_naif table =
       let uf = Projet_Cram.init_uf table in
       while ((resultat_couple table !i uf hash ) && (!i<= (cap)) ) do 
         i := !i+1;
+        Printf.printf "iteration\n";
       done;
       if !i = (cap+1) then failwith "le nimber est superieur au max precise"
       else !i 
