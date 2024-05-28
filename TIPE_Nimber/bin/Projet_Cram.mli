@@ -32,6 +32,9 @@ val actualiser_union_find :
   int ->
   Unionfind.t ref *
   (int * int * int * int) Struct_pers.New_Arr.data ref option
+val parcours_liste_tab : 'a array array ->
+(bool array array * int * int * int * int * int) list ->
+int -> int -> Unionfind.t ref -> unit
 val tab_post_sep :
   'a array array ->
   Unionfind.t ref ->
@@ -46,4 +49,3 @@ val play :
   (int * int * int * int) Struct_pers.New_Arr.data ref option
 val nimber_exact_naif : bool array array -> int
 val iter : 'a array array -> int * int * int -> int * int * int
-val perdu : bool array array -> bool

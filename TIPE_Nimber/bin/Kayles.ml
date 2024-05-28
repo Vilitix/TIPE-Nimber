@@ -20,17 +20,25 @@ else
 		mat_kayles.(n) <- Some (Nim_func.mex !set);
 		Option.get mat_kayles.(n)
 	
-		
-let nim (board:int option array):int = (*O(n)*)
+
+let nim (board:int array):int = (*O(n)*)
 	let nimber = ref 0 in (*0 élément neutre des nimbers *)
 	let j = ref 0 in (*emplacement du debut du dernier jeu pris en compte*)
 	let n = Array.length board in 
 	for i = 0 to (n-1) do 
-		if (board.(i) = 0) then 
+		if (board.(i) = 1) && (i<(n-1)) && (board.(i+1) = 1) then 
+			begin
+			let current_nimber = (nim_cas_general (i - !j)) in
+			nimber := Nim_func.add !nimber current_nimber; 
+		(*add en O(1) (Xor bit a bit), et nim_cas_general supposé calculé en 0(1)*)
+			j:= i+2	
+			end		
+		else if (board.(i) = 1) then  (
 			let current_nimber = (nim_cas_general (i - !j)) in
 			nimber := Nim_func.add !nimber current_nimber; 
 		(*add en O(1) (Xor bit a bit), et nim_cas_general supposé calculé en 0(1)*)
 			j:= i+1
+		)
 		done;
 		let dernier_nimber = nim_cas_general (n - (!j)) in 
 	 	nimber := Nim_func.add (!nimber) dernier_nimber;

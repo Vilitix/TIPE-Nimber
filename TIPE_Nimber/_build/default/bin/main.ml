@@ -217,7 +217,7 @@ Zobrist.save copy;;
 
 let save = Zobrist.restore ();;
 
-let table = [|[|false;false;false;false;false;false;false;false;false;false;false|];[|false;false;false;false;false;false;false;false;false;false;false|];[|false;false;false;false;false;false;false;false;false;false;false|];|];;
+let table = Array.make_matrix 3 11 false;;
 
 
 Printf.printf "nimber %d\n" (Cram_reso.nimber_non_naif table);;

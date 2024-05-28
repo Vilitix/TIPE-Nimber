@@ -1,10 +1,9 @@
 
 (*Zobrist.ml*)
+let hash_table = Hashtbl.create 2000000;; (*Table de hachage de portée globale dans tout le projet*)
 
 
-let hash_table = Hashtbl.create 1300000;; 
-
-let extract_key line =
+let extract_key (line:string):int*int*string =
   (*format de stockage :
      ligne,colonne,hash
      nimber
@@ -18,7 +17,7 @@ let extract_key line =
     i, j, hash
   | _->failwith "format mauvais"
 
-let restore () = 
+let restore ():((int*int*int,int) Hashtbl.t) = 
   let channel = open_in "/home/arthur/Desktop/TIPE/data_Cram/Hash.txt" in
   try
     while true do
@@ -33,24 +32,18 @@ let restore () =
     with
       End_of_file -> close_in channel;Hashtbl.copy hash_table 
       (*on renvoi une copie pour ne pas ajouter de doublons ensuite*)
-    ;;
-    ;;
-
-
-
-
-
+    
   
-let save copy = (*copy sert à ne pas reécrire des doublons dans le fichier *)
+let save (copy:(int*int*int,int) Hashtbl.t) :unit = 
+  (*copy sert à ne pas reécrire des doublons dans le fichier *)
   let channel = open_out_gen [Open_append] 0o644 "/home/arthur/Desktop/TIPE/data_Cram/Hash.txt" in
   Hashtbl.iter (fun (i,j,hash) (value:int) -> if ((Hashtbl.find_opt copy (i,j,hash)) = None) then (Printf.fprintf channel "%d,%d;%d\n%d\n" i j hash value)) hash_table;
   close_out channel;;
 
 
-
 (*chaine de bits générés aléatoirement dans un tableau 2D nb de case*2 si case 0 rien sinon pièce
    méthode relative au hachage de Zobrist*)
-let generate_hash_table (i,j) =
+let generate_hash_table (i,j) : int array array =
   let tab_hash = Array.make_matrix (i*j) 2 0 in 
   for i = 0 to (i*j)-1 do
     tab_hash.(i).(0) <- Int64.to_int (Random.int64 (Int64.of_int max_int));
@@ -58,15 +51,17 @@ let generate_hash_table (i,j) =
   done;
   tab_hash;;
 
-let store_hash_table (i,j) tab =
+
+let store_hash_table (i,j) (tab:int array array) : unit =
   (*organisation des fichier ligne_colonne arbitraire*)
   let file = "/home/arthur/Desktop/TIPE/data_Cram/" ^ string_of_int i ^ "_" ^ string_of_int j ^ ".txt" in
   let channel = open_out file in
   for i = 0 to (i*j)-1 do
     Printf.fprintf channel "%d\n%d\n" tab.(i).(0) tab.(i).(1);
-  done;;
+  done
 
-let get_hash_table (i,j) = 
+
+let get_hash_table (i,j) :int array array  = 
   let file = "/home/arthur/Desktop/TIPE/data_Cram/" ^ string_of_int i ^ "_" ^ string_of_int j ^ ".txt" in
   let tab = Array.make_matrix ((i*j)) 2 0 in 
   if (i<= j)&&(i!=0)&&(j!=0) then 
@@ -87,18 +82,9 @@ let get_hash_table (i,j) =
     
   else Array.make_matrix ((i*j)+1) 2 0 
   (*cas seulement utile pour initialiser la matrice de hash_table dans Cram_reso*)
-;;
 
 
-
-
-
-
-
-
-
-
-let init_hash table = 
+let init_hash (table:bool array array) :int = 
   let hash = ref 0 in 
   let n,p = Projet_Cram.taille table in
   let tab_hash = get_hash_table (n,p) in
@@ -109,4 +95,4 @@ let init_hash table =
     else hash := !hash lxor (tab_hash.(i).(0));
   done;
   !hash
-;;
+

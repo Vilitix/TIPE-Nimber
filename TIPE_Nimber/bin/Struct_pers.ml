@@ -1,7 +1,5 @@
 (*Struct.pers.ml*)
-
 (*Tableau persistant*)
-
 module New_Arr = struct
 type 'a t = 'a data ref
 and 'a data =
@@ -10,10 +8,10 @@ and 'a data =
 |Invalid
 
 
-let init n f = ref (Arr (Array.init n f))
+let init (n:int) (f:(int -> 'a)):'a data ref = ref (Arr (Array.init n f))
 
 
-let rec reroot t = 
+let rec reroot (t:'a t):unit = 
   (*sorte de compression des chemins du union find mais pour un tableau*)
   match !t with
   |Arr _ -> ()
@@ -30,7 +28,7 @@ let rec reroot t =
     |Invalid -> assert false
 
 
-let get t i = 
+let get (t:'a t) (i:int):'a = 
   match !t with
   |Arr a -> a.(i)
   |N _ -> 
@@ -44,7 +42,7 @@ let get t i =
   |Invalid -> assert false
 
 
-let set t i j = 
+let set (t:'a data ref) (i:int) (j:'a):'a data ref = 
   match !t with
   |Arr a as n ->
     begin
@@ -67,7 +65,6 @@ val set : 'a t -> int -> 'a -> 'a t
 end
 
 (*fin tableau persistant *)
-
 (*Union find*)
 module type PersistentUnionFind = sig
   type t
@@ -103,13 +100,11 @@ module Make(A : PersistentArray) : PersistentUnionFind = struct
       f, r
       (*compression des chemins*)
 
-
   let find h x =
     let f, cx = find_aux h.parent x in
     h.parent <- f;
     cx
 
-    
   let union h x y =
     let cx = find h x in
     let cy = find h y in

@@ -104,11 +104,8 @@ let rec resultat_couple table nimber uf (hash:int) =
               !res 
             end
           else true
-
         end 
       end
-      
-      
     end
   ;;
   

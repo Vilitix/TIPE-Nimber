@@ -11,8 +11,6 @@ let mat_to_tab i j p =
 let tab_to_mat k p = 
   (k/p,k mod p )
 
-
-
 (*TEST*)
 let print_matrix mat = 
   let n,p = taille mat in 
@@ -127,7 +125,6 @@ let init_uf tab =
     done;
   done;
   uf
-;;
 
 
 (*O(1)*)
@@ -166,7 +163,6 @@ let init_tab_case_adjacentes i j k l = (*renvoie les 10 cases adjacentes aux poi
 
 (*O(complexité du find + complexité du union) car ces opération sont fait un nombre borné de fois 
    car la taille de tab voisin est 10*)
-
 let tab_voisins_to_classe tab_voisin uf table =
   (*tab_res.(i) = true si la case correspondante est remplie ou un bord*)
   (*en pratique k = 10 non variable*)
@@ -229,22 +225,8 @@ let check_chemin tab uf :bool =
     done;
     (!res)
 
-(*O(n*p)*)
-let init_classe_uf table = 
-  let n,p = taille table in
-    (*indice qui s'explique par les bords qu'on évite par la suite*)
-    let f k = 
-    let i,j = tab_to_mat k (p+2) in
-    
-    if ((j != 0) && (i!= 0) && (j!= p+1) && (i!= n+1)) then
-    i,i,j,j
-    else 0,0,0,0
-  in
-  Struct_pers.New_Arr.init ((n+2)*(p+2)) f
-  
-
 (*O(n*p*(complexité union + complexité find)) ne s'execute que s'il y a séparation*)
-let actualiser_classes table =
+let actualiser_classes table : (Unionfind.t ref * (int * int * int * int) Struct_pers.New_Arr.data ref) =
   let n, p = taille table in
   let uf = init_uf table in
   let tab_c = ref (init_classe_uf table) in
@@ -268,56 +250,41 @@ let actualiser_classes table =
               tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
               (*les champs après classe finale représente les tailles de la classe d'équivalence*)
               (*on change les deux classes car l'union est susceptible de changer classe_to_add comme classe finale*)
-
-          | _, y when y = p - 1 ->
-            if not(table.(i + 1).(j)) then
-              let classe_to_add = Unionfind.find !uf (mat_to_tab (i + 2) (j + 1) (p + 2)) in
-              let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add) in
-              uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 2) (j + 1) (p + 2));
-              let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
-              let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
-              tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
-              tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
-               (*+2 car on étudie déjà i+1*)
-
+          | _, y when y = p - 1 -> if not(table.(i + 1).(j)) then
+            let classe_to_add = Unionfind.find !uf (mat_to_tab (i + 2) (j + 1) (p + 2)) in
+            let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add) in
+            uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 2) (j + 1) (p + 2));
+            let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
+            let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
+            tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
+            tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add) ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
           | _, _ ->
-              let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
-              
-              let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
-              if not(table.(i + 1).(j)) then (
-                
-                let classe_to_add1 = Unionfind.find !uf (mat_to_tab (i + 2) (j + 1) (p + 2)) in
+            let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
+            let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
+            if not(table.(i + 1).(j)) then (
+              let classe_to_add1 = Unionfind.find !uf (mat_to_tab (i + 2) (j + 1) (p + 2)) in
               let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add1) in
-                uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 2) (j + 1) (p + 2));
-              
-                tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale)  ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
-                tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add1)  ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
-                );
+              uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 2) (j + 1) (p + 2));
+              tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale)  ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i));
+              tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add1)  ((min xmin xmin_i),(max (max xmax (i+2)) xmax_i),(min ymin ymin_i),(max ymax ymax_i)));
 
-              if not(table.(i).(j + 1)) then (
-
-                let classe_to_add2 = Unionfind.find !uf (mat_to_tab (i + 1) (j + 2) (p + 2)) in
-                let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
-               (*rentrer dans les dexu if est possible les classes sont susceptibles de changer ce qui justifie les deux lignes 
-                  précédentes*)
-                let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
+            if not(table.(i).(j + 1)) then(
+              let classe_to_add2 = Unionfind.find !uf (mat_to_tab (i + 1) (j + 2) (p + 2)) in
+              let classe_finale = Unionfind.find !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) in 
+              (*rentrer dans les deux if et changer de classe  entre temps est possible*)
+              let xmin,xmax,ymin,ymax = Struct_pers.New_Arr.get !tab_c (classe_finale) in
               let xmin_i,xmax_i,ymin_i,ymax_i = Struct_pers.New_Arr.get !tab_c (classe_to_add2) in
-                uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
-                tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
-                tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add2) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
-
-                );
-              
+              uf:= Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) (mat_to_tab (i + 1) (j + 2) (p + 2));
+              tab_c := Struct_pers.New_Arr.set !tab_c (classe_finale) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i));
+              tab_c := Struct_pers.New_Arr.set !tab_c (classe_to_add2) ((min xmin_i xmin),(max xmax xmax_i),(min ymin ymin_i),(max (max ymax (j+2)) ymax_i)));     
         end
       else uf := Unionfind.union !uf (mat_to_tab (i + 1) (j + 1) (p + 2)) !classe_0 ; classe_0:= Unionfind.find !uf 0
-      (*on met dans la classe des bords chaque cases remplie*)
-    done;
-  done;
-  uf,!tab_c
+    done;(*on met dans la classe des bords chaque cases remplie*)
+  done; uf,!tab_c
     
 
 (*O(n*p*(complexité union)) si séparation sinon O(complexité union)*)
-let actualiser_union_find table uf i j direction  =
+let actualiser_union_find table (uf:Unionfind.t ref) i j direction :(Unionfind.t ref * (int * int * int * int) Struct_pers.New_Arr.data ref option)  =
   let _,p = taille table in 
     let k,l = deuxieme_cases_vise i j direction in
     let new_uf =  ref (Unionfind.union !uf (mat_to_tab (k+1) (l+1) (p+2)) (mat_to_tab (i+1) (j+1) (p+2))) in
@@ -328,6 +295,28 @@ let actualiser_union_find table uf i j direction  =
       let uf_post_actu, new_tab_c = actualiser_classes table in 
       uf_post_actu, Some new_tab_c)
     else new_uf, None
+
+(*O(complexité du find) car liste de taille <= 4*)
+(*fonction auxiliaire pour la fonction suivante*)
+let rec parcours_liste_tab table (liste:(bool array array * int * int * int * int * int) list) k l uf : unit = 
+  let _,p = taille table in
+  match liste with 
+  |[] -> () (*pas d'erreur si grosse partie recouverte de jetons ils n'ont pas de tableau *)
+  |(tab,j,xmin_l,xmax_l,ymin_l,ymax_l)::q -> 
+    (*association des valeurs des nouveaux tableaux, true si la case est à true ou déjà dans 
+       un autre tableau false sinon *)
+    begin
+      if ((k-xmin_l >=0) && (0<=(xmax_l-k)) && ((l-ymin_l)>=0) && ((ymax_l-l)>=0)) then 
+        begin
+
+        if ((xmax_l-xmin_l+1) > (ymax_l-ymin_l+1)) then 
+          tab.(l-ymin_l).(k-xmin_l) <- (Unionfind.find !uf (mat_to_tab (k) (l) (p+2))) != j
+        else
+        tab.(k-xmin_l).(l-ymin_l) <- (Unionfind.find !uf (mat_to_tab (k) (l) (p+2))) != j
+        end
+      else parcours_liste_tab table q k l uf
+    end
+
 
 (*O(n*p*alpha(n))*)
 let tab_post_sep table uf tab_c = 
@@ -353,30 +342,9 @@ let tab_post_sep table uf tab_c =
     let k,l = tab_to_mat i (p+2) in
     
     if ((k!= 0) && (l!=0) && (k!=n+1) && (l!= p+1) ) then 
-
-      begin
-      (*O(complexité du find) car liste de taille <= 4*)
-    let rec parcourir_liste liste = 
-      match liste with 
-      |[] -> () (*pas d'erreur si grosse partie recouverte de jetons ils n'ont pas de tableau *)
-      |(tab,j,xmin_l,xmax_l,ymin_l,ymax_l)::q -> 
-        (*association des valeurs des nouveaux tableaux, true si la case est à true ou déjà dans 
-           un autre tableau false sinon *)
-        begin
-          if ((k-xmin_l >=0) && (0<=(xmax_l-k)) && ((l-ymin_l)>=0) && ((ymax_l-l)>=0)) then 
-            begin
-
-            if ((xmax_l-xmin_l+1) > (ymax_l-ymin_l+1)) then 
-              tab.(l-ymin_l).(k-xmin_l) <- (Unionfind.find !uf (mat_to_tab (k) (l) (p+2))) != j
-            else
-            tab.(k-xmin_l).(l-ymin_l) <- (Unionfind.find !uf (mat_to_tab (k) (l) (p+2))) != j
-            end
-          else parcourir_liste q
-        end
-      in
-      parcourir_liste !liste_res
-    end
+      parcours_liste_tab table !liste_res k l uf
   done;
+
   let f l = let (tab,_,_,_,_,_) = l in tab in
   List.map f !liste_res
 
@@ -394,24 +362,6 @@ let play table uf i j direction =
   else failwith "coup incorrect"
 ;; 
     
-let perdu table =
-  let n,p = taille table in
-  let res = ref true in
-  let tab_direction = [|-1;1;-2;2|] in
-  for k = 0 to 3 do 
-    for i = 0 to (n-1) do 
-      for j = 0 to (p-1) do 
-        if (is_playable table i j tab_direction.(k)) then 
-          begin
-            res := false;
-          end
-      done;
-    done;
-  done;
-  !res
-
-
-
 
 let iter table (i,j,k) = 
   (*préfère les coups verticaux car ils sont à prioriser dans une table ou ligne < colonne ce qui est le cas ici si 
