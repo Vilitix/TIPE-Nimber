@@ -225,7 +225,7 @@ let check_chemin tab uf :bool =
     done;
     (!res)
 
-(*O(n*p)*)
+
 let init_classe_uf table = 
   let n,p = taille table in
     (*indice qui s'explique par les bords qu'on évite par la suite*)
@@ -238,7 +238,6 @@ let init_classe_uf table =
   in
   Struct_pers.New_Arr.init ((n+2)*(p+2)) f
   
-
 (*O(n*p*(complexité union + complexité find)) ne s'execute que s'il y a séparation*)
 let actualiser_classes table : (Unionfind.t ref * (int * int * int * int) Struct_pers.New_Arr.data ref) =
   let n, p = taille table in

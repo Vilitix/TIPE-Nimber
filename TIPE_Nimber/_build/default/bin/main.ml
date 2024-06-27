@@ -216,11 +216,8 @@ Zobrist.save copy;;
 
 
 let save = Zobrist.restore ();;
+Marienbad_reso.graphe [|5;4;3;2;1|];;
 
-let table = Array.make_matrix 3 11 false;;
-
-
-Printf.printf "nimber %d\n" (Cram_reso.nimber_non_naif table);;
 (*
 Printf.printf "nimber %d\n" (Projet_Cram.nimber_exact_naif table);;
 *)

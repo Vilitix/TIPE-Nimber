@@ -1,1 +1,1 @@
-bin/main.ml: Array Cram_reso Printf Zobrist
+bin/main.ml: Marienbad_reso Zobrist
