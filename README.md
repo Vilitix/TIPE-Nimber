@@ -1,0 +1,2 @@
+# Travail d'initiative personnelle encadré
+Repository of my [TIPE](https://fr.wikipedia.org/wiki/Travail_d%27initiative_personnelle_encadr%C3%A9) in Ocaml using [Dune](https://dune.readthedocs.io/en/latest/quick-start.html) for a project named Nimber Concept et Applications. 
